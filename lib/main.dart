@@ -1,4 +1,5 @@
 import 'package:Eat.Caias/pages/studteach/home.dart';
+import 'package:Eat.Caias/pages/studteach/studlogin.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,12 +11,14 @@ class EatCAIAS extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Eat.CAIAS',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
         useMaterial3: true,
       ),
-      home: Home(),
+      home: const Studlogin(),
+      routes: {"/home": (context) => const Home()},
     );
   }
 }
