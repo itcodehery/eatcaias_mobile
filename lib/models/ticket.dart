@@ -1,13 +1,15 @@
 class Ticket {
-  final int ticketId;
+  final String ticketId;
+  final String userID;
+  final String itemIDs;
+  final double totalValue;
   final DateTime raisedAt;
-  final String orderName;
-  final String orderUser;
 
   Ticket({
+    required this.userID,
+    required this.itemIDs,
+    required this.totalValue,
     required this.ticketId,
-    required this.orderName,
-    required this.orderUser,
     required this.raisedAt,
   });
 }

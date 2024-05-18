@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -9,15 +10,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   //constants
-  final _mainButtonsStyle = const ButtonStyle(
-    fixedSize: MaterialStatePropertyAll(Size(150, 50)),
-    minimumSize: MaterialStatePropertyAll(Size(120, 40)),
-    elevation: MaterialStatePropertyAll(0),
-    shape: MaterialStatePropertyAll(
-      RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))),
-    ),
-  );
+  // final _mainButtonsStyle = const ButtonStyle(
+  //   fixedSize: MaterialStatePropertyAll(Size(150, 50)),
+  //   minimumSize: MaterialStatePropertyAll(Size(120, 40)),
+  //   elevation: MaterialStatePropertyAll(0),
+  //   shape: MaterialStatePropertyAll(
+  //     RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.all(Radius.circular(5))),
+  //   ),
+  // );
 
   //main builder
   @override
@@ -27,8 +28,7 @@ class _HomeState extends State<Home> {
         title: const Text('eat.caias'),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.airplane_ticket_outlined))
+              onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.ticket))
         ],
       ),
       body: Column(

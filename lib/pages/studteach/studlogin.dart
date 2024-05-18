@@ -168,7 +168,7 @@ class _StudloginState extends State<Studlogin> {
                     ))),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Navigator.of(context).pushReplacementNamed("/home");
+                    Navigator.of(context).pushReplacementNamed("/widget_tree");
                   }
                 },
                 child: Row(
