@@ -72,5 +72,15 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
+  fonts:
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/Outfit-Regular.otf
+        - asset: assets/fonts/Outfit-Bold.otf
+          weight: 900
+        - asset: assets/fonts/Outfit-Medium.otf
+          weight: 600
+        - asset: assets/fonts/Outfit-SemiBold.otf
+          weight: 700
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

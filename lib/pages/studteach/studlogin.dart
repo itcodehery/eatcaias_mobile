@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:password_strength/password_strength.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 enum AuthState { login, signIn }
 
@@ -23,6 +24,9 @@ class _StudloginState extends State<Studlogin> {
   final passwordController = TextEditingController();
   final fullNameController = TextEditingController();
 
+  //supabase
+  final supabase = Supabase.instance.client;
+
   //keys
   final _formKey = GlobalKey<FormState>();
   @override
@@ -34,6 +38,28 @@ class _StudloginState extends State<Studlogin> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              RichText(
+                text: TextSpan(children: [
+                  WidgetSpan(
+                    child: Text(
+                      'Welcome to ',
+                      style: TextStyle(
+                        color: Colors.brown.shade500,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  WidgetSpan(
+                      child: Text(
+                    'eat.CAIAS',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber.shade700,
+                        fontSize: 24),
+                  ))
+                ]),
+              ),
+              const SizedBox(height: 20),
               SegmentedButton(
                 selectedIcon: const Icon(Icons.login),
                 style: ButtonStyle(
@@ -54,19 +80,6 @@ class _StudloginState extends State<Studlogin> {
                     isLogin = !isLogin;
                   });
                 },
-              ),
-              const SizedBox(height: 10),
-              RichText(
-                text: const TextSpan(children: [
-                  WidgetSpan(
-                    child: Text('Welcome to '),
-                  ),
-                  WidgetSpan(
-                      child: Text(
-                    'eat.CAIAS',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ))
-                ]),
               ),
               const SizedBox(height: 10),
               Form(
@@ -153,33 +166,23 @@ class _StudloginState extends State<Studlogin> {
               )
             ],
           )),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: [
-            const Spacer(),
-            ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        const MaterialStatePropertyAll(Colors.amber),
-                    foregroundColor: const MaterialStatePropertyAll(
-                        Color.fromARGB(255, 101, 44, 0)),
-                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ))),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.of(context).pushReplacementNamed("/widget_tree");
-                  }
-                },
-                child: Row(
-                  children: [
-                    const Icon(Icons.login),
-                    const SizedBox(width: 10),
-                    Text(isLogin ? "Login" : "Sign In")
-                  ],
-                ))
-          ],
-        ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            if (isLogin) {
+              final response = await supabase.auth.signInWithPassword(
+                  email: emailController.text,
+                  password: passwordController.text);
+            } else {
+              final response = await supabase.auth.signUp(
+                  email: emailController.text,
+                  password: passwordController.text,
+                  data: {"username": fullNameController.text});
+            }
+          }
+        },
+        label: Text(isLogin ? "Login" : "Sign Up"),
+        icon: const Icon(Icons.login),
       ),
     );
   }
