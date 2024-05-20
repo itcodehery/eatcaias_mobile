@@ -11,10 +11,8 @@ class _TicketListPageState extends State<TicketListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          return null;
-        },
+      appBar: AppBar(
+        title: const Text('eat.caias / my tickets'),
       ),
     );
   }

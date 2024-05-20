@@ -20,15 +20,37 @@ class _HomeState extends State<Home> {
   //   ),
   // );
 
+  //controller
+  final searchController = TextEditingController();
+
   //main builder
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('eat.caias'),
+        bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(85),
+            child: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: SearchBar(
+                controller: searchController,
+                hintText: 'Search for food or canteens',
+                leading: const Row(
+                  children: [
+                    SizedBox(width: 10),
+                    Icon(Icons.search),
+                  ],
+                ),
+                elevation: const MaterialStatePropertyAll(2),
+              ),
+            )),
         actions: [
           IconButton(
-              onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.ticket))
+              onPressed: () {
+                Navigator.of(context).pushNamed("/profile");
+              },
+              icon: const Icon(Icons.account_circle_outlined))
         ],
       ),
       body: Column(

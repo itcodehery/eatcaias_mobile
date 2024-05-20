@@ -1,5 +1,6 @@
 import 'package:Eat.Caias/pages/studteach/home.dart';
 import 'package:Eat.Caias/pages/studteach/studlogin.dart';
+import 'package:Eat.Caias/pages/ticket_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -17,7 +18,7 @@ class _WidgetTreeState extends State<WidgetTree> {
     return Scaffold(
       body: [
         const Home(),
-        const Studlogin(),
+        const TicketListPage(),
       ][_currentIndex],
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
@@ -25,6 +26,7 @@ class _WidgetTreeState extends State<WidgetTree> {
               _currentIndex = index;
             });
           },
+          selectedIndex: _currentIndex,
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
@@ -32,8 +34,9 @@ class _WidgetTreeState extends State<WidgetTree> {
               label: "Home",
             ),
             NavigationDestination(
-              icon: Icon(Icons.login),
-              label: "Login",
+              selectedIcon: FaIcon(FontAwesomeIcons.ticket),
+              icon: FaIcon(FontAwesomeIcons.ticket),
+              label: "Tickets",
             )
           ]),
     );
