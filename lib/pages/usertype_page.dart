@@ -48,6 +48,7 @@ class UsertypePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          const Text('Login as'),
           ElevatedButton(
               style: buttonStyle,
               onPressed: () => Navigator.of(context).pushNamed("/vendorlogin"),
