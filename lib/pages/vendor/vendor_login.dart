@@ -1,26 +1,23 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-enum AuthType { login, signIn }
+enum AuthState { login, signIn }
 
-class Studlogin extends StatefulWidget {
-  const Studlogin({Key? key}) : super(key: key);
+class VendorLogin extends StatefulWidget {
+  const VendorLogin({Key? key}) : super(key: key);
 
   @override
-  _StudloginState createState() => _StudloginState();
+  _VendorLoginState createState() => _VendorLoginState();
 }
 
-class _StudloginState extends State<Studlogin> {
+class _VendorLoginState extends State<VendorLogin> {
   //authmode
   String errorMessage = '';
   bool isLogin = true;
-  AuthType authMode = AuthType.login;
-  late final StreamSubscription<AuthState> _authSubscription;
+  AuthState authMode = AuthState.login;
 
   //controllers
   final emailController = TextEditingController();
@@ -33,25 +30,12 @@ class _StudloginState extends State<Studlogin> {
   //keys
   final _formKey = GlobalKey<FormState>();
 
-  //initState
-  @override
-  void initState() {
-    super.initState();
-    _authSubscription = supabase.auth.onAuthStateChange.listen((event) {
-      final session = event.session;
-      if (session != null) {
-        Navigator.of(context).pushReplacementNamed("/widget_tree");
-      }
-    });
-  }
-
   //dispose
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     fullNameController.dispose();
-    _authSubscription.cancel();
     super.dispose();
   }
 
@@ -68,7 +52,7 @@ class _StudloginState extends State<Studlogin> {
                 text: TextSpan(children: [
                   WidgetSpan(
                     child: Text(
-                      'Find your eats @ ',
+                      'Make your store @ ',
                       style: TextStyle(
                         color: Colors.brown.shade500,
                         fontSize: 24,
@@ -94,12 +78,13 @@ class _StudloginState extends State<Studlogin> {
                     )),
                     foregroundColor: MaterialStatePropertyAll(
                         Theme.of(context).colorScheme.primary)),
-                segments: const <ButtonSegment<AuthType>>[
-                  ButtonSegment(value: AuthType.login, label: Text('Login')),
-                  ButtonSegment(value: AuthType.signIn, label: Text('Sign Up')),
+                segments: const <ButtonSegment<AuthState>>[
+                  ButtonSegment(value: AuthState.login, label: Text('Login')),
+                  ButtonSegment(
+                      value: AuthState.signIn, label: Text('Sign Up')),
                 ],
-                selected: <AuthType>{authMode},
-                onSelectionChanged: (Set<AuthType> newSelection) {
+                selected: <AuthState>{authMode},
+                onSelectionChanged: (Set<AuthState> newSelection) {
                   setState(() {
                     authMode = newSelection.first;
                     isLogin = !isLogin;
@@ -116,13 +101,11 @@ class _StudloginState extends State<Studlogin> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
-                          label: Text('Your CAIAS Email')),
+                          label: Text('Your Email')),
                       controller: emailController,
                       validator: (value) {
                         ValidationBuilder().email().maxLength(50).build();
-                        if (!(value!.contains('@caias.in'))) {
-                          return "Enter a CAIAS email!";
-                        }
+
                         return null;
                       },
                     ),
@@ -171,6 +154,28 @@ class _StudloginState extends State<Studlogin> {
                             const SizedBox(height: 20),
                           ],
                         )),
+                    // ElevatedButton(
+                    //     style: ButtonStyle(
+                    //         backgroundColor:
+                    //             MaterialStatePropertyAll(Colors.amber.shade200),
+                    //         shape:
+                    //             MaterialStatePropertyAll(RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(6),
+                    //         ))),
+                    //     onPressed: () {
+                    //       if (_formKey.currentState!.validate()) {
+                    //         Navigator.of(context).pushReplacementNamed("/home");
+                    //       }
+                    //     },
+                    //     child: Row(
+                    //       crossAxisAlignment: CrossAxisAlignment.center,
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       children: [
+                    //         const Icon(Icons.login),
+                    //         const SizedBox(width: 10),
+                    //         Text(isLogin ? 'Login' : "Sign Up")
+                    //       ],
+                    //     ))
                   ],
                 ),
               )
@@ -180,34 +185,14 @@ class _StudloginState extends State<Studlogin> {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             if (isLogin) {
-              try {
-                final email = emailController.text.trim();
-
-                await supabase.auth.signInWithPassword(
-                    email: email, password: passwordController.text);
-
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Logged in as $email!'),
-                  ));
-                }
-              } on AuthException catch (error) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(error.message)));
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Error Occurred! Please retry.')));
-              }
+              final response = await supabase.auth.signInWithPassword(
+                  email: emailController.text,
+                  password: passwordController.text);
             } else {
-              final email = emailController.text.trim();
-              final username = fullNameController.text.trim();
-              await supabase.auth.signUp(
-                  email: email,
+              final response = await supabase.auth.signUp(
+                  email: emailController.text,
                   password: passwordController.text,
-                  data: {"username": username});
-              await supabase
-                  .from('studteach_user')
-                  .insert({'id': 3, 'email': email, 'username': username});
+                  data: {"username": fullNameController.text});
             }
           }
         },

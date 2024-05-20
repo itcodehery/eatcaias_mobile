@@ -2,6 +2,7 @@ import 'package:Eat.Caias/pages/profile_page.dart';
 import 'package:Eat.Caias/pages/studteach/home.dart';
 import 'package:Eat.Caias/pages/studteach/studlogin.dart';
 import 'package:Eat.Caias/pages/usertype_page.dart';
+import 'package:Eat.Caias/pages/vendor/vendor_login.dart';
 import 'package:Eat.Caias/pages/widget_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -38,6 +39,7 @@ class EatCAIAS extends StatelessWidget {
       home: const UsertypePage(),
       routes: {
         "/home": (context) => const Home(),
+        "/vendorlogin": (context) => const VendorLogin(),
         "loginas": (context) => const UsertypePage(),
         "/login": (context) => const Studlogin(),
         "/widget_tree": (context) => const WidgetTree(),
