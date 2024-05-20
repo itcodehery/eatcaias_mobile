@@ -1,10 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-enum AuthState { login, signIn }
 
 class VendorLogin extends StatefulWidget {
   const VendorLogin({Key? key}) : super(key: key);
@@ -16,8 +15,8 @@ class VendorLogin extends StatefulWidget {
 class _VendorLoginState extends State<VendorLogin> {
   //authmode
   String errorMessage = '';
-  bool isLogin = true;
-  AuthState authMode = AuthState.login;
+  bool isObscured = true;
+  late final StreamSubscription<AuthState> _auth;
 
   //controllers
   final emailController = TextEditingController();
@@ -30,12 +29,25 @@ class _VendorLoginState extends State<VendorLogin> {
   //keys
   final _formKey = GlobalKey<FormState>();
 
+  //initstate
+  @override
+  void initState() {
+    super.initState();
+    _auth = supabase.auth.onAuthStateChange.listen((event) {
+      final session = event.session;
+      if (session != null) {
+        Navigator.of(context).pushReplacementNamed("/vendor_tree");
+      }
+    });
+  }
+
   //dispose
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     fullNameController.dispose();
+    _auth.cancel();
     super.dispose();
   }
 
@@ -69,29 +81,10 @@ class _VendorLoginState extends State<VendorLogin> {
                   ))
                 ]),
               ),
+              const SizedBox(height: 5),
+              const Text(
+                  'To register your store and become a vendor, contact the developer at haririo321@gmail.com'),
               const SizedBox(height: 10),
-              SegmentedButton(
-                selectedIcon: const Icon(Icons.login),
-                style: ButtonStyle(
-                    side: MaterialStatePropertyAll(BorderSide(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    )),
-                    foregroundColor: MaterialStatePropertyAll(
-                        Theme.of(context).colorScheme.primary)),
-                segments: const <ButtonSegment<AuthState>>[
-                  ButtonSegment(value: AuthState.login, label: Text('Login')),
-                  ButtonSegment(
-                      value: AuthState.signIn, label: Text('Sign Up')),
-                ],
-                selected: <AuthState>{authMode},
-                onSelectionChanged: (Set<AuthState> newSelection) {
-                  setState(() {
-                    authMode = newSelection.first;
-                    isLogin = !isLogin;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
               Form(
                 key: _formKey,
                 child: Column(
@@ -110,72 +103,41 @@ class _VendorLoginState extends State<VendorLogin> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: passwordController,
+                            obscureText: isObscured,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
+                                ),
+                                label: Text('Password')),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "The field is required!";
+                              }
+                              if (estimatePasswordStrength(value) < 0.3) {
+                                return 'Password is too weak';
+                              }
+                              return null;
+                            },
                           ),
-                          label: Text('Password')),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "The field is required!";
-                        }
-                        if (estimatePasswordStrength(value) < 0.3) {
-                          return 'Password is too weak';
-                        }
-                        return null;
-                      },
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscured = !isObscured;
+                              });
+                            },
+                            icon: isObscured
+                                ? const Icon(Icons.hide_source)
+                                : const Icon(Icons.password)),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                    Visibility(
-                        visible: !isLogin,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(12)),
-                                  ),
-                                  label: Text('Full Name')),
-                              controller: fullNameController,
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(20),
-                                FilteringTextInputFormatter.singleLineFormatter,
-                                FilteringTextInputFormatter.deny(" ",
-                                    replacementString: "-")
-                              ],
-                              validator: (value) {
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        )),
-                    // ElevatedButton(
-                    //     style: ButtonStyle(
-                    //         backgroundColor:
-                    //             MaterialStatePropertyAll(Colors.amber.shade200),
-                    //         shape:
-                    //             MaterialStatePropertyAll(RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(6),
-                    //         ))),
-                    //     onPressed: () {
-                    //       if (_formKey.currentState!.validate()) {
-                    //         Navigator.of(context).pushReplacementNamed("/home");
-                    //       }
-                    //     },
-                    //     child: Row(
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       children: [
-                    //         const Icon(Icons.login),
-                    //         const SizedBox(width: 10),
-                    //         Text(isLogin ? 'Login' : "Sign Up")
-                    //       ],
-                    //     ))
                   ],
                 ),
               )
@@ -184,19 +146,11 @@ class _VendorLoginState extends State<VendorLogin> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            if (isLogin) {
-              final response = await supabase.auth.signInWithPassword(
-                  email: emailController.text,
-                  password: passwordController.text);
-            } else {
-              final response = await supabase.auth.signUp(
-                  email: emailController.text,
-                  password: passwordController.text,
-                  data: {"username": fullNameController.text});
-            }
+            await supabase.auth.signInWithPassword(
+                email: emailController.text, password: passwordController.text);
           }
         },
-        label: Text(isLogin ? "Login" : "Sign Up"),
+        label: const Text("Login"),
         icon: const Icon(Icons.login),
       ),
     );

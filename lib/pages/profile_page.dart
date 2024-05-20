@@ -10,6 +10,33 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final supabase = Supabase.instance.client;
+  String username = "Not available";
+
+  @override
+  void initState() {
+    fetchUsername();
+    super.initState();
+  }
+
+  Future<void> fetchUsername() async {
+    final user = supabase.auth.currentUser;
+    if (user != null) {
+      final userId = user.id;
+      final response = await supabase
+          .from('studteach_user')
+          .select('username')
+          .eq('id', userId)
+          .single();
+
+      if (response.isNotEmpty) {
+        setState(() {
+          username = response['username'];
+        });
+      } else {
+        print('Error fetching username: Response is empty!');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +51,10 @@ class _ProfilePageState extends State<ProfilePage> {
               title: const Text('Signed in as'),
               subtitle: Text(supabase.auth.currentUser!.email!),
             ),
-            const ListTile(
-              title: Text('Username'),
-              subtitle: Text("Not available"),
+            ListTile(
+              title: const Text('Username'),
+              subtitle: Text(username),
             ),
-            TextButton(
-                onPressed: () {
-                  debugPrint(supabase.auth.currentUser!
-                      .userMetadata!['raw_user_meta_data']["username"]);
-                },
-                child: const Text("Print")),
             const SizedBox(height: 10),
             ListTile(
               onTap: () {
@@ -65,6 +86,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ElevatedButton(
                                     onPressed: () async {
                                       await supabase.auth.signOut();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Logged out successfully!')));
+                                      Navigator.of(context)
+                                          .pushReplacementNamed('/');
                                     },
                                     child: const Text('Yes'),
                                   ),

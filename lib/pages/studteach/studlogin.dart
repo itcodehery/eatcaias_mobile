@@ -19,6 +19,7 @@ class _StudloginState extends State<Studlogin> {
   //authmode
   String errorMessage = '';
   bool isLogin = true;
+  bool isObscured = true;
   AuthType authMode = AuthType.login;
   late final StreamSubscription<AuthState> _authSubscription;
 
@@ -127,23 +128,40 @@ class _StudloginState extends State<Studlogin> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: passwordController,
+                            obscureText: isObscured,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
+                                ),
+                                label: Text('Password')),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "The field is required!";
+                              }
+                              if (estimatePasswordStrength(value) < 0.3) {
+                                return 'Password is too weak';
+                              }
+                              return null;
+                            },
                           ),
-                          label: Text('Password')),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "The field is required!";
-                        }
-                        if (estimatePasswordStrength(value) < 0.3) {
-                          return 'Password is too weak';
-                        }
-                        return null;
-                      },
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscured = !isObscured;
+                              });
+                            },
+                            icon: isObscured
+                                ? const Icon(Icons.hide_source)
+                                : const Icon(Icons.password)),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     Visibility(
@@ -189,6 +207,9 @@ class _StudloginState extends State<Studlogin> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Logged in as $email!'),
+                    backgroundColor: const Color.fromARGB(255, 147, 83, 0),
+                    behavior: SnackBarBehavior.floating,
+                    margin: const EdgeInsets.all(10),
                   ));
                 }
               } on AuthException catch (error) {
@@ -205,9 +226,10 @@ class _StudloginState extends State<Studlogin> {
                   email: email,
                   password: passwordController.text,
                   data: {"username": username});
+              //below 2 lines don't work
               await supabase
                   .from('studteach_user')
-                  .insert({'id': 3, 'email': email, 'username': username});
+                  .insert({'email': email, 'username': username});
             }
           }
         },
