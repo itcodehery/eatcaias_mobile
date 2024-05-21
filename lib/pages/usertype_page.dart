@@ -18,7 +18,7 @@ class UsertypePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushReplacementNamed("/login");
+                Navigator.of(context).pushNamed("/login");
               },
               child: const Text('Login as Student/Staff'),
             )
