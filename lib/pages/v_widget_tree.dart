@@ -1,4 +1,4 @@
-import 'package:Eat.Caias/pages/stores_page.dart';
+import 'package:Eat.Caias/pages/ticket_list_page.dart';
 import 'package:Eat.Caias/pages/vendor/my_store.dart';
 import 'package:Eat.Caias/pages/vendor/vendor_home.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ class _VWidgetTreeState extends State<VWidgetTree> {
     return Scaffold(
       body: [
         const VendorHome(),
-        const StoresPage(),
+        const TicketListPage(),
         const MyStore(),
       ][_currentIndex],
       bottomNavigationBar: NavigationBar(

@@ -10,8 +10,6 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   final supabase = Supabase.instance.client;
-<<<<<<< Updated upstream
-=======
   String username = "Not available";
 
   @override
@@ -57,7 +55,6 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
->>>>>>> Stashed changes
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,11 +76,6 @@ class ProfilePageState extends State<ProfilePage> {
               title: Text("Hari"),
             ),
             const SizedBox(height: 10),
-<<<<<<< Updated upstream
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Log Out'),
-=======
             ListTile(
               leading: const Icon(Icons.logout),
               onTap: () {
@@ -152,7 +144,6 @@ class ProfilePageState extends State<ProfilePage> {
               title: const Text(
                 'Settings',
               ),
->>>>>>> Stashed changes
             ),
           ],
         ),

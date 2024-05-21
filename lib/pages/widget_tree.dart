@@ -1,10 +1,5 @@
 import 'package:Eat.Caias/pages/studteach/home.dart';
-<<<<<<< Updated upstream
-import 'package:Eat.Caias/pages/studteach/studlogin.dart';
 import 'package:Eat.Caias/pages/ticket_list_page.dart';
-=======
-import 'package:Eat.Caias/pages/stores_page.dart';
->>>>>>> Stashed changes
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
