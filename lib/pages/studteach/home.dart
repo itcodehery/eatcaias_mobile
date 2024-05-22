@@ -1,4 +1,7 @@
+import 'package:Eat.Caias/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -19,8 +22,36 @@ class HomeState extends State<Home> {
   //   ),
   // );
 
+  List<Map<String, dynamic>> _listOfShops = [];
+
   //controller
   final searchController = TextEditingController();
+
+  //fetch shops
+  Future<void> _fetchShops() async {
+    try {
+      final response = await supabase.from('canteen_shop').select("*");
+      if (response.isNotEmpty) {
+        setState(() {
+          _listOfShops = response;
+        });
+      }
+    } on PostgrestException catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: const Text('Unexpected error occurred'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    }
+  }
 
   //main builder
   @override
@@ -78,14 +109,66 @@ class HomeState extends State<Home> {
                   ]),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FutureBuilder(
+              future: _fetchShops(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
+                }
+                return ListView.builder(
+                  itemCount: _listOfShops.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: _listOfShops.elementAt(index)["shop_name"],
+                      trailing: const Icon(Icons.chevron_right),
+                    );
+                  },
+                );
+              },
+            ),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Lmao stop eating ffs')));
+          var textStyle = TextStyle(
+            color: Colors.brown.shade700,
+          );
+          Navigator.of(context).pushNamed('/cart');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 6),
+              backgroundColor: Colors.amber,
+              content: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.celebration_outlined),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Achievement Unlocked!',
+                        style: textStyle,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "Gobblin' Time",
+                    style: TextStyle(
+                      color: Colors.brown.shade700,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+                  Text('Opened Cart for the First Time', style: textStyle),
+                ],
+              )));
         },
-        label: const Text('New Order'),
+        label: const Text('My Cart'),
         icon: const Icon(Icons.shopping_basket_outlined),
       ),
     );

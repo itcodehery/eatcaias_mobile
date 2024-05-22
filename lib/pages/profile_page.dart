@@ -14,8 +14,8 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    _fetchUsername();
     super.initState();
+    _fetchUsername();
   }
 
   Future<void> _fetchUsername() async {
@@ -72,8 +72,62 @@ class ProfilePageState extends State<ProfilePage> {
       body: Center(
         child: Column(
           children: [
-            const ListTile(
-              title: Text("Hari"),
+            ListTile(
+              title: const Text("Logged in as"),
+              subtitle: Text(supabase.auth.currentUser!.email!),
+              trailing: Icon(Icons.verified, color: Colors.brown.shade700),
+            ),
+            ListTile(
+              title: const Text("Profile created at"),
+              subtitle: Text(supabase.auth.currentUser!.createdAt),
+            ),
+            ListTile(
+              title: const Text("Authentication State"),
+              subtitle: Text(supabase.auth.currentUser!.aud),
+            ),
+            ListTile(
+              title: const Text("User Server ID (For Developer Purposes only)"),
+              subtitle: Text(supabase.auth.currentUser!.id),
+            ),
+            ListTile(
+              onLongPress: () {
+                var textStyle = TextStyle(
+                  color: Colors.brown.shade700,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 6),
+                    backgroundColor: Colors.amber,
+                    content: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.celebration_outlined),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Achievement Unlocked!',
+                              style: textStyle,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "Self-Obsessed",
+                          style: TextStyle(
+                            color: Colors.brown.shade700,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                        Text('Long press your name for some reason idk.',
+                            style: textStyle),
+                      ],
+                    )));
+              },
+              title: const Text('About You'),
+              subtitle: Text(username),
             ),
             const SizedBox(height: 10),
             ListTile(
@@ -119,6 +173,8 @@ class ProfilePageState extends State<ProfilePage> {
                                           .showSnackBar(const SnackBar(
                                               content: Text(
                                                   'Logged out successfully!')));
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
                                       Navigator.of(context)
                                           .pushReplacementNamed('/');
                                     },
@@ -145,6 +201,9 @@ class ProfilePageState extends State<ProfilePage> {
                 'Settings',
               ),
             ),
+            const Spacer(),
+            const Text("Made by Hari Prasad"),
+            const SizedBox(height: 20),
           ],
         ),
       ),

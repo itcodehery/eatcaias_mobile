@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:password_strength/password_strength.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-enum AuthState { login, signIn }
+enum AuthType { login, signIn }
 
 class Studlogin extends StatefulWidget {
   const Studlogin({Key? key}) : super(key: key);
@@ -17,7 +19,8 @@ class _StudloginState extends State<Studlogin> {
   //authmode
   String errorMessage = '';
   bool isLogin = true;
-  AuthState authMode = AuthState.login;
+  AuthType authMode = AuthType.login;
+  late final StreamSubscription<AuthState> _auth;
 
   //controllers
   final emailController = TextEditingController();
@@ -29,6 +32,19 @@ class _StudloginState extends State<Studlogin> {
 
   //keys
   final _formKey = GlobalKey<FormState>();
+
+  //initstate
+  @override
+  void initState() {
+    super.initState();
+    _auth = supabase.auth.onAuthStateChange.listen((event) {
+      final session = event.session;
+      if (session != null) {
+        Navigator.of(context).pushReplacementNamed("/vendor_tree");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +54,7 @@ class _StudloginState extends State<Studlogin> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const BackButton(),
               RichText(
                 text: TextSpan(children: [
                   WidgetSpan(
@@ -68,13 +85,12 @@ class _StudloginState extends State<Studlogin> {
                     )),
                     foregroundColor: MaterialStatePropertyAll(
                         Theme.of(context).colorScheme.primary)),
-                segments: const <ButtonSegment<AuthState>>[
-                  ButtonSegment(value: AuthState.login, label: Text('Login')),
-                  ButtonSegment(
-                      value: AuthState.signIn, label: Text('Sign Up')),
+                segments: const <ButtonSegment<AuthType>>[
+                  ButtonSegment(value: AuthType.login, label: Text('Login')),
+                  ButtonSegment(value: AuthType.signIn, label: Text('Sign Up')),
                 ],
-                selected: <AuthState>{authMode},
-                onSelectionChanged: (Set<AuthState> newSelection) {
+                selected: <AuthType>{authMode},
+                onSelectionChanged: (Set<AuthType> newSelection) {
                   setState(() {
                     authMode = newSelection.first;
                     isLogin = !isLogin;
@@ -170,11 +186,24 @@ class _StudloginState extends State<Studlogin> {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             if (isLogin) {
-              final response = await supabase.auth.signInWithPassword(
-                  email: emailController.text,
-                  password: passwordController.text);
+              try {
+                await supabase.auth
+                    .signInWithPassword(
+                        email: emailController.text,
+                        password: passwordController.text)
+                    .then((value) => ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                                Text('Logged in as ${emailController.text}'))));
+              } on AuthException catch (e) {
+                setState(() {
+                  errorMessage = e.message;
+                });
+                ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+                    content: Text(errorMessage), actions: const []));
+              }
             } else {
-              final response = await supabase.auth.signUp(
+              await supabase.auth.signUp(
                   email: emailController.text,
                   password: passwordController.text,
                   data: {"username": fullNameController.text});

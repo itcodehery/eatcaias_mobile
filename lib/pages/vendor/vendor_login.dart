@@ -53,6 +53,7 @@ class _VendorLoginState extends State<VendorLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

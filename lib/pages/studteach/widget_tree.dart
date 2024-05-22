@@ -1,25 +1,23 @@
-import 'package:Eat.Caias/pages/ticket_list_page.dart';
-import 'package:Eat.Caias/pages/vendor/my_store.dart';
-import 'package:Eat.Caias/pages/vendor/vendor_home.dart';
+import 'package:Eat.Caias/pages/studteach/home.dart';
+import 'package:Eat.Caias/pages/studteach/ticket_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class VWidgetTree extends StatefulWidget {
-  const VWidgetTree({Key? key}) : super(key: key);
+class WidgetTree extends StatefulWidget {
+  const WidgetTree({Key? key}) : super(key: key);
 
   @override
-  _VWidgetTreeState createState() => _VWidgetTreeState();
+  _WidgetTreeState createState() => _WidgetTreeState();
 }
 
-class _VWidgetTreeState extends State<VWidgetTree> {
+class _WidgetTreeState extends State<WidgetTree> {
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: [
-        const VendorHome(),
+        const Home(),
         const TicketListPage(),
-        const MyStore(),
       ][_currentIndex],
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
@@ -38,11 +36,7 @@ class _VWidgetTreeState extends State<VWidgetTree> {
               selectedIcon: FaIcon(FontAwesomeIcons.ticket),
               icon: FaIcon(FontAwesomeIcons.ticket),
               label: "Tickets",
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.store),
-              label: "Your Store",
-            ),
+            )
           ]),
     );
   }

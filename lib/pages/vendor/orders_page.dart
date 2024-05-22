@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class TicketListPage extends StatefulWidget {
-  const TicketListPage({Key? key}) : super(key: key);
+class OrdersPage extends StatefulWidget {
+  const OrdersPage({Key? key}) : super(key: key);
 
   @override
-  _TicketListPageState createState() => _TicketListPageState();
+  _OrdersPageState createState() => _OrdersPageState();
 }
 
-class _TicketListPageState extends State<TicketListPage> {
+class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +16,7 @@ class _TicketListPageState extends State<TicketListPage> {
           children: [
             const Text('eat.caias / '),
             Text(
-              'tickets',
+              'all orders',
               style: TextStyle(color: Colors.amber.shade800),
             )
           ],
