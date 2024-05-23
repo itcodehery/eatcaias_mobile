@@ -10,33 +10,32 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   final supabase = Supabase.instance.client;
-  String username = "Not available";
+  String? username;
+  final TextEditingController _usernameController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    super.initState();
     _fetchUsername();
+    super.initState();
   }
 
   Future<void> _fetchUsername() async {
     try {
-      final user = supabase.auth.currentUser;
-      if (user != null) {
-        final userId = user.id;
-        final response = await supabase
-            .from('studteach_user')
-            .select('username')
-            .eq('id', userId)
-            .single();
+      final user = supabase.auth.currentUser!;
+      final response = await supabase
+          .from('studteach_user')
+          .select()
+          .eq('email', user.email!)
+          .single();
 
-        if (response.isNotEmpty) {
-          setState(() {
-            username = (response['username'] ?? " ") as String;
-          });
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Username is null')));
-        }
+      if (response.isNotEmpty) {
+        setState(() {
+          username = (response['username'] ?? " ") as String;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Username is null')));
       }
     } on PostgrestException catch (error) {
       if (mounted) {
@@ -86,10 +85,6 @@ class ProfilePageState extends State<ProfilePage> {
               subtitle: Text(supabase.auth.currentUser!.aud),
             ),
             ListTile(
-              title: const Text("User Server ID (For Developer Purposes only)"),
-              subtitle: Text(supabase.auth.currentUser!.id),
-            ),
-            ListTile(
               onLongPress: () {
                 var textStyle = TextStyle(
                   color: Colors.brown.shade700,
@@ -126,8 +121,95 @@ class ProfilePageState extends State<ProfilePage> {
                       ],
                     )));
               },
-              title: const Text('About You'),
-              subtitle: Text(username),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Dialog(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const ListTile(
+                            title: Text('Edit username'),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Enter a new username:'),
+                                Form(
+                                  key: _formKey,
+                                  child: TextFormField(
+                                    controller: _usernameController,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(width: 2),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                style: const ButtonStyle(
+                                  elevation: MaterialStatePropertyAll(0),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Cancel"),
+                              ),
+                              const SizedBox(width: 10),
+                              ElevatedButton(
+                                style: const ButtonStyle(
+                                  elevation: MaterialStatePropertyAll(0),
+                                ),
+                                onPressed: () async {
+                                  await supabase
+                                      .from("studteach_user")
+                                      .update({
+                                        "username":
+                                            _usernameController.text.trim()
+                                      })
+                                      .eq("email",
+                                          supabase.auth.currentUser!.email!)
+                                      .then((value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    "The value has been updated")));
+                                        setState(() {
+                                          username =
+                                              _usernameController.text.trim();
+                                        });
+                                      });
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Yes'),
+                              ),
+                              const SizedBox(width: 10),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              title: const Text('Username'),
+              subtitle: username != null
+                  ? Text(username!)
+                  : const LinearProgressIndicator(),
             ),
             const SizedBox(height: 10),
             ListTile(

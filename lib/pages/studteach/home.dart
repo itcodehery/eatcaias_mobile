@@ -22,7 +22,9 @@ class HomeState extends State<Home> {
   //   ),
   // );
 
-  List<Map<String, dynamic>> _listOfShops = [];
+  String offer = "No offers available";
+
+  late List<Map<String, dynamic>> _listOfShops = [];
 
   //controller
   final searchController = TextEditingController();
@@ -30,10 +32,18 @@ class HomeState extends State<Home> {
   //fetch shops
   Future<void> _fetchShops() async {
     try {
-      final response = await supabase.from('canteen_shop').select("*");
-      if (response.isNotEmpty) {
+      final data = await supabase.from('canteen_shop').select();
+      final offers = await supabase.from('offers').select();
+      if (data.isNotEmpty) {
         setState(() {
-          _listOfShops = response;
+          _listOfShops = data;
+        });
+      } else {
+        return;
+      }
+      if (offers.isNotEmpty) {
+        setState(() {
+          offer = offers.elementAt(offers.length - 1)["offer"]!;
         });
       }
     } on PostgrestException catch (error) {
@@ -51,6 +61,13 @@ class HomeState extends State<Home> {
         );
       }
     }
+  }
+
+  //initState
+  @override
+  void initState() {
+    _fetchShops();
+    super.initState();
   }
 
   //main builder
@@ -83,53 +100,65 @@ class HomeState extends State<Home> {
               icon: const Icon(Icons.account_circle_outlined))
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-              Colors.amber,
-              Colors.orange.shade500,
-            ])),
-            width: double.maxFinite,
-            height: 200,
-            child: const Center(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Get 10% off on Saturdays!',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('Offer not available at Cafe Coffee Day Cafe')
-                  ]),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FutureBuilder(
-              future: _fetchShops(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const CircularProgressIndicator();
-                }
-                return ListView.builder(
+      body: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.amber,
+                      Colors.orange.shade500,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                width: double.maxFinite,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 20.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.celebration_rounded),
+                              SizedBox(width: 10),
+                              Text("Today's Offer"),
+                            ],
+                          ),
+                          Text(
+                            offer,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text('Our Canteens'),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 300,
+                child: ListView.builder(
                   itemCount: _listOfShops.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: _listOfShops.elementAt(index)["shop_name"],
-                      trailing: const Icon(Icons.chevron_right),
-                    );
+                    return getCustomListTile(index);
                   },
-                );
-              },
-            ),
-          )
-        ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -170,6 +199,17 @@ class HomeState extends State<Home> {
         },
         label: const Text('My Cart'),
         icon: const Icon(Icons.shopping_basket_outlined),
+      ),
+    );
+  }
+
+  Widget getCustomListTile(int index) {
+    return Card(
+      child: ListTile(
+        title: Text(_listOfShops[index]["shop_name"] as String),
+        subtitle: Text(_listOfShops[index]["description"] as String),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {},
       ),
     );
   }
