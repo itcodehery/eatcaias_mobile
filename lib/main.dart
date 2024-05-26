@@ -1,4 +1,6 @@
+import 'package:Eat.Caias/pages/common/four_o_four.dart';
 import 'package:Eat.Caias/pages/common/settings_page.dart';
+import 'package:Eat.Caias/pages/common/splash_page.dart';
 import 'package:Eat.Caias/pages/profile_page.dart';
 import 'package:Eat.Caias/pages/studteach/cart_page.dart';
 import 'package:Eat.Caias/pages/studteach/home.dart';
@@ -26,8 +28,6 @@ Future<void> main() async {
   runApp(const EatCAIAS());
 }
 
-final supabase = Supabase.instance.client;
-
 class EatCAIAS extends StatelessWidget {
   const EatCAIAS({super.key});
   @override
@@ -39,7 +39,7 @@ class EatCAIAS extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
           useMaterial3: true,
           fontFamily: 'Outfit'),
-      home: const UsertypePage(),
+      home: const SplashPage(),
       routes: {
         "/home": (context) => const Home(),
         "loginas": (context) => const UsertypePage(),
@@ -50,6 +50,11 @@ class EatCAIAS extends StatelessWidget {
         "/profile": (context) => const ProfilePage(),
         "/settings": (context) => const SettingsPage(),
         "/cart": (context) => const CartPage(),
+        "/404": (context) => const FourOFour(),
+      },
+      onUnknownRoute: (settings) {
+        Navigator.of(context).pushReplacementNamed("/404");
+        return null;
       },
     );
   }
