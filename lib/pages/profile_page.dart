@@ -11,8 +11,8 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   final supabase = Supabase.instance.client;
   String? username;
-  final TextEditingController _usernameController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // final TextEditingController _usernameController = TextEditingController();
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -77,14 +77,6 @@ class ProfilePageState extends State<ProfilePage> {
               trailing: Icon(Icons.verified, color: Colors.brown.shade700),
             ),
             ListTile(
-              title: const Text("Profile created at"),
-              subtitle: Text(supabase.auth.currentUser!.createdAt),
-            ),
-            ListTile(
-              title: const Text("Authentication State"),
-              subtitle: Text(supabase.auth.currentUser!.aud),
-            ),
-            ListTile(
               onLongPress: () {
                 var textStyle = TextStyle(
                   color: Colors.brown.shade700,
@@ -122,96 +114,108 @@ class ProfilePageState extends State<ProfilePage> {
                     )));
               },
               onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const ListTile(
-                            title: Text('Edit username'),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Enter a new username:'),
-                                Form(
-                                  key: _formKey,
-                                  child: TextFormField(
-                                    controller: _usernameController,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(width: 2),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                style: const ButtonStyle(
-                                  elevation: MaterialStatePropertyAll(0),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("Cancel"),
-                              ),
-                              const SizedBox(width: 10),
-                              ElevatedButton(
-                                style: const ButtonStyle(
-                                  elevation: MaterialStatePropertyAll(0),
-                                ),
-                                onPressed: () async {
-                                  await supabase
-                                      .from("studteach_user")
-                                      .update({
-                                        "username":
-                                            _usernameController.text.trim()
-                                      })
-                                      .eq("email",
-                                          supabase.auth.currentUser!.email!)
-                                      .then((value) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                content: Text(
-                                                    "The value has been updated")));
-                                        setState(() {
-                                          username =
-                                              _usernameController.text.trim();
-                                        });
-                                      });
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Yes'),
-                              ),
-                              const SizedBox(width: 10),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                        ],
-                      ),
-                    );
-                  },
-                );
+                // showDialog(
+                //   context: context,
+                //   builder: (context) {
+                //     return Dialog(
+                //       child: Column(
+                //         mainAxisSize: MainAxisSize.min,
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           const ListTile(
+                //             title: Text('Edit username'),
+                //           ),
+                //           Padding(
+                //             padding:
+                //                 const EdgeInsets.symmetric(horizontal: 16.0),
+                //             child: Column(
+                //               crossAxisAlignment: CrossAxisAlignment.start,
+                //               children: [
+                //                 const Text('Enter a new username:'),
+                //                 Form(
+                //                   key: _formKey,
+                //                   child: TextFormField(
+                //                     controller: _usernameController,
+                //                     decoration: const InputDecoration(
+                //                       border: OutlineInputBorder(
+                //                         borderSide: BorderSide(width: 2),
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //           const SizedBox(height: 20),
+                //           Row(
+                //             crossAxisAlignment: CrossAxisAlignment.center,
+                //             mainAxisAlignment: MainAxisAlignment.end,
+                //             children: [
+                //               ElevatedButton(
+                //                 style: const ButtonStyle(
+                //                   elevation: MaterialStatePropertyAll(0),
+                //                 ),
+                //                 onPressed: () {
+                //                   Navigator.of(context).pop();
+                //                 },
+                //                 child: const Text("Cancel"),
+                //               ),
+                //               const SizedBox(width: 10),
+                //               ElevatedButton(
+                //                 style: const ButtonStyle(
+                //                   elevation: MaterialStatePropertyAll(0),
+                //                 ),
+                //                 onPressed: () async {
+                //                   await supabase
+                //                       .from("studteach_user")
+                //                       .update({
+                //                         "username":
+                //                             _usernameController.text.trim()
+                //                       })
+                //                       .eq("email",
+                //                           supabase.auth.currentUser!.email!)
+                //                       .then((value) {
+                //                         ScaffoldMessenger.of(context)
+                //                             .showSnackBar(const SnackBar(
+                //                                 content: Text(
+                //                                     "The value has been updated")));
+                //                         setState(() {
+                //                           username =
+                //                               _usernameController.text.trim();
+                //                         });
+                //                       });
+                //                   Navigator.of(context).pop();
+                //                 },
+                //                 child: const Text('Yes'),
+                //               ),
+                //               const SizedBox(width: 10),
+                //             ],
+                //           ),
+                //           const SizedBox(height: 10),
+                //         ],
+                //       ),
+                //     );
+                // },
+                // );
               },
               title: const Text('Username'),
               subtitle: username != null
                   ? Text(username!)
                   : const LinearProgressIndicator(),
+              trailing: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {},
+              ),
             ),
-            const SizedBox(height: 10),
+            ListTile(
+              title: const Text("Profile created at"),
+              subtitle: Text(supabase.auth.currentUser!.createdAt),
+            ),
+            ListTile(
+              title: const Text("Authentication State"),
+              subtitle: Text(supabase.auth.currentUser!.aud),
+            ),
+            const Divider(),
             ListTile(
               leading: const Icon(Icons.logout),
               onTap: () {

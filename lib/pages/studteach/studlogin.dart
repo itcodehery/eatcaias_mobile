@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Eat.Caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
@@ -19,6 +20,7 @@ class _StudloginState extends State<Studlogin> {
   //authmode
   String errorMessage = '';
   bool isLogin = true;
+  bool isObscured = true;
   AuthType authMode = AuthType.login;
   late final StreamSubscription<AuthState> _auth;
 
@@ -26,9 +28,6 @@ class _StudloginState extends State<Studlogin> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final fullNameController = TextEditingController();
-
-  //supabase
-  final supabase = Supabase.instance.client;
 
   //keys
   final _formKey = GlobalKey<FormState>();
@@ -46,6 +45,15 @@ class _StudloginState extends State<Studlogin> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    fullNameController.dispose();
+    _auth.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
@@ -54,7 +62,6 @@ class _StudloginState extends State<Studlogin> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const BackButton(),
               RichText(
                 text: TextSpan(children: [
                   WidgetSpan(
@@ -104,7 +111,9 @@ class _StudloginState extends State<Studlogin> {
                   children: [
                     TextFormField(
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
                           label: Text('Your CAIAS Email')),
                       controller: emailController,
                       validator: (value) {
@@ -116,21 +125,40 @@ class _StudloginState extends State<Studlogin> {
                       },
                     ),
                     const SizedBox(height: 10),
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Password')),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "The field is required!";
-                        }
-                        if (estimatePasswordStrength(value) < 0.3) {
-                          return 'Password is too weak';
-                        }
-                        return null;
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: passwordController,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
+                                ),
+                                label: Text('Password')),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "The field is required!";
+                              }
+                              if (estimatePasswordStrength(value) < 0.3) {
+                                return 'Password is too weak';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscured = !isObscured;
+                              });
+                            },
+                            icon: isObscured
+                                ? const Icon(Icons.hide_source)
+                                : const Icon(Icons.password)),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     Visibility(
@@ -139,7 +167,10 @@ class _StudloginState extends State<Studlogin> {
                           children: [
                             TextFormField(
                               decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                  ),
                                   label: Text('Full Name')),
                               controller: fullNameController,
                               inputFormatters: [
@@ -149,34 +180,15 @@ class _StudloginState extends State<Studlogin> {
                                     replacementString: "-")
                               ],
                               validator: (value) {
+                                if (value == null && !isLogin) {
+                                  return "The field is required!";
+                                }
                                 return null;
                               },
                             ),
                             const SizedBox(height: 10),
                           ],
                         )),
-                    // ElevatedButton(
-                    //     style: ButtonStyle(
-                    //         backgroundColor:
-                    //             MaterialStatePropertyAll(Colors.amber.shade200),
-                    //         shape:
-                    //             MaterialStatePropertyAll(RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(6),
-                    //         ))),
-                    //     onPressed: () {
-                    //       if (_formKey.currentState!.validate()) {
-                    //         Navigator.of(context).pushReplacementNamed("/home");
-                    //       }
-                    //     },
-                    //     child: Row(
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       children: [
-                    //         const Icon(Icons.login),
-                    //         const SizedBox(width: 10),
-                    //         Text(isLogin ? 'Login' : "Sign Up")
-                    //       ],
-                    //     ))
                   ],
                 ),
               )
