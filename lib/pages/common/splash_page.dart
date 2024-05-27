@@ -11,21 +11,15 @@ class SplashPage extends StatefulWidget {
 final supabase = Supabase.instance.client;
 
 class _SplashPageState extends State<SplashPage> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _redirect();
-  // }
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      _redirect();
-    });
+    _redirect();
   }
 
   Future<void> _redirect() async {
     await Future.delayed(Duration.zero);
+    debugPrint('inside redirect!');
     final session = supabase.auth.currentSession;
     if (!mounted) return;
     if (session != null) {

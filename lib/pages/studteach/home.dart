@@ -1,4 +1,5 @@
 import 'package:Eat.Caias/constants.dart';
+import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -22,7 +23,7 @@ class HomeState extends State<Home> {
   //   ),
   // );
 
-  String offer = "No offers available";
+  String? offer;
 
   late List<Map<String, dynamic>> _listOfShops = [];
 
@@ -80,16 +81,20 @@ class HomeState extends State<Home> {
             preferredSize: const Size.fromHeight(85),
             child: Padding(
               padding: const EdgeInsets.all(14.0),
-              child: SearchBar(
-                controller: searchController,
-                hintText: 'Search for food or canteens',
-                leading: const Row(
-                  children: [
-                    SizedBox(width: 10),
-                    Icon(Icons.search),
-                  ],
-                ),
-                elevation: const MaterialStatePropertyAll(2),
+              child: Column(
+                children: [
+                  SearchBar(
+                    controller: searchController,
+                    hintText: 'Search for food or canteens',
+                    leading: const Row(
+                      children: [
+                        SizedBox(width: 10),
+                        Icon(Icons.search),
+                      ],
+                    ),
+                    elevation: const MaterialStatePropertyAll(2),
+                  ),
+                ],
               ),
             )),
         actions: [
@@ -97,16 +102,16 @@ class HomeState extends State<Home> {
               onPressed: () {
                 Navigator.of(context).pushNamed("/profile");
               },
-              icon: const Icon(Icons.account_circle_outlined))
+              icon: Icon(Icons.account_circle, color: Colors.amber.shade700))
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(14.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -133,31 +138,36 @@ class HomeState extends State<Home> {
                               Text("Today's Offer"),
                             ],
                           ),
-                          Text(
-                            offer,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          offer != null
+                              ? Text(
+                                  offer!,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : const LinearProgressIndicator(
+                                  color: Colors.amber,
+                                ),
                         ]),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text('Our Canteens'),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 300,
-                child: ListView.builder(
-                  itemCount: _listOfShops.length,
-                  itemBuilder: (context, index) {
-                    return getCustomListTile(index);
-                  },
-                ),
-              )
-            ],
-          ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text('Browse through Canteens'),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: ListView.builder(
+                itemCount: _listOfShops.length,
+                itemBuilder: (context, index) {
+                  return getCustomListTile(index);
+                },
+              ),
+            )
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -205,11 +215,42 @@ class HomeState extends State<Home> {
 
   Widget getCustomListTile(int index) {
     return Card(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+          side: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1,
+          )),
       child: ListTile(
-        title: Text(_listOfShops[index]["shop_name"] as String),
-        subtitle: Text(_listOfShops[index]["description"] as String),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () {},
+        title: Text(
+          _listOfShops[index]["shop_name"] as String,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          _listOfShops[index]["description"] as String,
+        ),
+        trailing: ElevatedButton(
+            style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(
+                    Color.fromARGB(255, 255, 151, 144)),
+                padding: MaterialStatePropertyAll(EdgeInsets.all(0)),
+                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                )),
+                fixedSize: MaterialStatePropertyAll(Size.square(50))),
+            onPressed: () {},
+            child: const Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+            )),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ShopDetailsPage(
+              shopName: _listOfShops[index]["shop_name"] as String),
+        )),
       ),
     );
   }
