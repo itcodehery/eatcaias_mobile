@@ -11,8 +11,6 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   final supabase = Supabase.instance.client;
   String? username;
-  // final TextEditingController _usernameController = TextEditingController();
-  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
