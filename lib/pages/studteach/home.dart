@@ -1,7 +1,9 @@
 import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
+import 'package:Eat.Caias/provider/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Home extends StatefulWidget {
@@ -122,34 +124,55 @@ class HomeState extends State<Home> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 width: double.maxFinite,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20.0, horizontal: 20.0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.celebration_rounded),
-                              SizedBox(width: 10),
-                              Text("Today's Offer"),
-                            ],
-                          ),
-                          offer != null
-                              ? Text(
-                                  offer!,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Today\'s Offer'),
+                          content: Text(offer ?? 'No offer available'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Close'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20.0, horizontal: 20.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(Icons.celebration_rounded),
+                                SizedBox(width: 10),
+                                Text("Today's Offer"),
+                              ],
+                            ),
+                            offer != null
+                                ? Text(
+                                    offer!,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : const LinearProgressIndicator(
+                                    color: Colors.amber,
                                   ),
-                                )
-                              : const LinearProgressIndicator(
-                                  color: Colors.amber,
-                                ),
-                        ]),
+                          ]),
+                    ),
                   ),
                 ),
               ),
@@ -161,6 +184,7 @@ class HomeState extends State<Home> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.8,
               child: ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: _listOfShops.length,
                 itemBuilder: (context, index) {
                   return getCustomListTile(index);
@@ -172,40 +196,9 @@ class HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          var textStyle = TextStyle(
-            color: Colors.brown.shade700,
-          );
           Navigator.of(context).pushNamed('/cart');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 6),
-              backgroundColor: Colors.amber,
-              content: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.celebration_outlined),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Achievement Unlocked!',
-                        style: textStyle,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "Gobblin' Time",
-                    style: TextStyle(
-                      color: Colors.brown.shade700,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                  Text('Opened Cart for the First Time', style: textStyle),
-                ],
-              )));
+          ScaffoldMessenger.of(context).showSnackBar(achievementSnackbar(
+              "Gobblin' Time", "Opened Cart for the First Time"));
         },
         label: const Text('My Cart'),
         icon: const Icon(Icons.shopping_basket_outlined),
@@ -224,34 +217,46 @@ class HomeState extends State<Home> {
             width: 1,
           )),
       child: ListTile(
-        title: Text(
-          _listOfShops[index]["shop_name"] as String,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
+          title: Text(
+            _listOfShops[index]["shop_name"] as String,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
-        subtitle: Text(
-          _listOfShops[index]["description"] as String,
-        ),
-        trailing: ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(
-                    Color.fromARGB(255, 255, 151, 144)),
-                padding: MaterialStatePropertyAll(EdgeInsets.all(0)),
-                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                )),
-                fixedSize: MaterialStatePropertyAll(Size.square(50))),
-            onPressed: () {},
-            child: const Icon(
-              Icons.chevron_right,
-              color: Colors.white,
-            )),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ShopDetailsPage(
-              shopName: _listOfShops[index]["shop_name"] as String),
-        )),
-      ),
+          subtitle: Text(
+            _listOfShops[index]["description"] as String,
+          ),
+          trailing: ElevatedButton(
+              style: const ButtonStyle(
+                  elevation: MaterialStatePropertyAll(0),
+                  backgroundColor: MaterialStatePropertyAll(
+                      Color.fromARGB(255, 255, 151, 144)),
+                  padding: MaterialStatePropertyAll(EdgeInsets.all(0)),
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                  )),
+                  fixedSize: MaterialStatePropertyAll(Size.square(50))),
+              onPressed: () {},
+              child: const Icon(
+                Icons.chevron_right,
+                color: Colors.white,
+              )),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ShopDetailsPage(
+                  shopName: _listOfShops[index]["shop_name"] as String,
+                ),
+              ),
+            );
+          }),
     );
+  }
+
+  //dispose
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 }

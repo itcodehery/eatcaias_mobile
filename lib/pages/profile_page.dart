@@ -1,3 +1,4 @@
+import 'package:Eat.Caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -76,40 +77,9 @@ class ProfilePageState extends State<ProfilePage> {
             ),
             ListTile(
               onLongPress: () {
-                var textStyle = TextStyle(
-                  color: Colors.brown.shade700,
-                );
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    duration: const Duration(seconds: 6),
-                    backgroundColor: Colors.amber,
-                    content: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.celebration_outlined),
-                            const SizedBox(width: 10),
-                            Text(
-                              'Achievement Unlocked!',
-                              style: textStyle,
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "Self-Obsessed",
-                          style: TextStyle(
-                            color: Colors.brown.shade700,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
-                        ),
-                        Text('Long press your name for some reason idk.',
-                            style: textStyle),
-                      ],
-                    )));
+                ScaffoldMessenger.of(context).showSnackBar(achievementSnackbar(
+                    "Self-Obsessed",
+                    "Long Press on your name for some reason"));
               },
               onTap: () {
                 // showDialog(

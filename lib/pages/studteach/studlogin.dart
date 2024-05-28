@@ -211,8 +211,9 @@ class _StudloginState extends State<Studlogin> {
                 setState(() {
                   errorMessage = e.message;
                 });
-                ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
-                    content: Text(errorMessage), actions: const []));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        '$errorMessage | Please retry by restarting the app')));
               }
             } else {
               await supabase.auth.signUp(
