@@ -1,3 +1,4 @@
+import 'package:Eat.Caias/provider/cart_provider.dart';
 import 'package:flutter/material.dart';
 
 class CartPage extends StatefulWidget {
@@ -8,6 +9,18 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  List<String> cartItems = [];
+  @override
+  void initState() {
+    super.initState();
+    _fetchCartItems();
+  }
+
+  void _fetchCartItems() {
+    //fetch cart items
+    cartItems = CartProvider().cartItems;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,21 +35,20 @@ class _CartPageState extends State<CartPage> {
           ],
         ),
       ),
-      body: const Center(
-        child: Text('My Cart'),
-      ),
+      body: cartItems.isNotEmpty
+          ? ListView.builder(
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return const ListTile(
+                  title: Text('Item'),
+                  leading: Icon(Icons.fastfood),
+                  trailing: Text('₹ 100'),
+                );
+              },
+            )
+          : const Center(child: CircularProgressIndicator()),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
-              content: const Text('Wanna buy nothing?'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).clearMaterialBanners();
-                    },
-                    child: const Text('Nah'))
-              ]));
-        },
+        onPressed: () {},
         icon: const Icon(Icons.shopping_cart_checkout),
         label: const Text('Checkout'),
       ),
