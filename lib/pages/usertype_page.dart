@@ -67,7 +67,7 @@ class _UsertypePageState extends State<UsertypePage> {
         )),
         bottomNavigationBar: BottomAppBar(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

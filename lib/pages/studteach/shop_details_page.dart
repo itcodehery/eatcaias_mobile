@@ -124,13 +124,16 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                       ]),
                 ),
               )),
-          const Padding(
-            padding: EdgeInsets.all(14.0),
-            child: Text('Items available'),
+          ListTile(
+            title: const Text('Items available'),
+            trailing: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.filter_alt_outlined),
+            ),
           ),
           _shopItems.isNotEmpty
               ? SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.6,
                   child: _shopItems.isNotEmpty
                       ? ListView.builder(
                           itemCount: _shopItems.length,
@@ -150,6 +153,20 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
     );
   }
 
+  Widget isVegTag(bool isVeg) {
+    return Container(
+        decoration: BoxDecoration(
+          color: isVeg ? Colors.green.shade600 : Colors.red.shade800,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            child: Text(
+              isVeg ? "Veg" : "Non-Veg",
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            )));
+  }
+
   Widget getCustomListTile(int index) {
     return Card(
       color: Colors.white,
@@ -161,37 +178,118 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
             width: 1,
           )),
       child: ListTile(
+        enabled: _shopItems[index]["is_inStock"] as bool,
         tileColor: Colors.white,
-        title: Text(_shopItems[index]["item_name"]! as String),
-        subtitle: Text(_shopItems[index]["description"]! as String),
-        leading: _shopItems[index]["is_veg"]! as bool
-            ? Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const FaIcon(
-                  FontAwesomeIcons.bowlFood,
-                  color: Colors.green,
-                ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: FaIcon(
-                  FontAwesomeIcons.bowlFood,
-                  color: Colors.red.shade800,
-                ),
-              ),
-        trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+        title: Text(_shopItems[index]["item_name"]! as String,
+            overflow: TextOverflow.ellipsis),
+        subtitle: Text(
+          _shopItems[index]["is_inStock"] as bool
+              ? _shopItems[index]["description"]! as String
+              : "OUT OF STOCK",
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Column(
+          children: [
+            isVegTag(_shopItems[index]["is_veg"] as bool),
+          ],
+        ),
         onTap: () {
-          showToast(
-              "${_shopItems[index]["item_name"]! as String} (x1) added to cart",
+          int itemCount = 0;
+          showDialog(
               context: context,
-              animation: StyledToastAnimation.fade,
-              reverseAnimation: StyledToastAnimation.fade,
-              backgroundColor: Colors.amber.shade600,
-              textStyle: const TextStyle(color: Colors.black));
+              builder: (context) => Dialog(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: const ButtonStyle(
+                                padding:
+                                    MaterialStatePropertyAll(EdgeInsets.zero)),
+                          ),
+                          _shopItems[index]["image_url"] != null
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 10,
+                                    bottom: 10,
+                                  ),
+                                  child: Container(
+                                    height: 140,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(_shopItems[index]
+                                            ["image_url"] as String),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          // const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(_shopItems[index]["item_name"]! as String,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
+                              isVegTag(_shopItems[index]["is_veg"] as bool),
+                            ],
+                          ),
+                          Text(_shopItems[index]["description"]! as String),
+                          const Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "₹${_shopItems[index]["price"] as int}",
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          if (itemCount > 0) {
+                                            itemCount--;
+                                            showCartToast(
+                                              "${_shopItems[index]["item_name"]! as String} removed from cart",
+                                              context,
+                                            );
+                                          }
+                                        });
+                                      },
+                                      icon: const Icon(Icons.close)),
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          itemCount++;
+                                        });
+                                        showCartToast(
+                                            "${_shopItems[index]["item_name"]! as String} (x$itemCount) added to cart",
+                                            context);
+                                      },
+                                      icon: const Icon(Icons.add)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ));
         },
         onLongPress: () {
           ScaffoldMessenger.of(context).showSnackBar(

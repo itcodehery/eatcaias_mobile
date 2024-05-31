@@ -1,3 +1,4 @@
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -47,4 +48,42 @@ SnackBar achievementSnackbar(
           Text(achievementDescription, style: brownTextStyle),
         ],
       ));
+}
+
+SnackBar errorSnackbar(String errorMessage) {
+  return SnackBar(
+    behavior: SnackBarBehavior.floating,
+    duration: const Duration(seconds: 6),
+    backgroundColor: Colors.red,
+    content: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const Icon(Icons.error_outline),
+            const SizedBox(width: 10),
+            Text(
+              'Error!',
+              style: brownTextStyle,
+            ),
+          ],
+        ),
+        Text(
+          errorMessage,
+          style: brownTextStyle,
+        ),
+      ],
+    ),
+  );
+}
+
+ToastFuture showCartToast(String message, BuildContext context) {
+  return showToast(message,
+      context: context,
+      animation: StyledToastAnimation.fade,
+      reverseAnimation: StyledToastAnimation.fade,
+      backgroundColor: Colors.amber.shade600,
+      textStyle: const TextStyle(color: Colors.black, fontSize: 14));
 }
