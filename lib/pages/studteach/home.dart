@@ -109,7 +109,7 @@ class HomeState extends State<Home> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -168,18 +168,15 @@ class HomeState extends State<Home> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   )
-                                : const LinearProgressIndicator(
-                                    color: Colors.amber,
-                                  ),
+                                : const Text("Loading today's offer...")
                           ]),
                     ),
                   ),
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text('Browse through Canteens'),
+            const ListTile(
+              title: Text('Browse through Canteens'),
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.8,

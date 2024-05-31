@@ -22,6 +22,14 @@ class _TicketListPageState extends State<TicketListPage> {
           ],
         ),
       ),
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(children: [
+          SearchBar(
+            hintText: 'Search for tickets',
+          ),
+        ]),
+      ),
     );
   }
 }
