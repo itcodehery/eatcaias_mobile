@@ -201,7 +201,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
               builder: (context) => Dialog(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: dialogPadding,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,

@@ -7,6 +7,7 @@ import 'package:Eat.Caias/pages/studteach/home.dart';
 import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
 import 'package:Eat.Caias/pages/studteach/studlogin.dart';
 import 'package:Eat.Caias/pages/usertype_page.dart';
+import 'package:Eat.Caias/pages/vendor/add_item_page.dart';
 import 'package:Eat.Caias/pages/vendor/v_widget_tree.dart';
 import 'package:Eat.Caias/pages/vendor/vendor_login.dart';
 import 'package:Eat.Caias/pages/studteach/widget_tree.dart';
@@ -50,6 +51,7 @@ class EatCAIAS extends StatelessWidget {
         "/vwidget_tree": (context) => const VWidgetTree(),
         "/profile": (context) => const ProfilePage(),
         "/settings": (context) => const SettingsPage(),
+        "/add_item": (context) => const AddItemPage(),
         "/cart": (context) => const CartPage(),
         "/404": (context) => const FourOFour(),
       },
