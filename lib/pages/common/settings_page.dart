@@ -1,4 +1,4 @@
-import 'package:Eat.Caias/helper/settings_list.dart';
+import 'package:Eat.Caias/constants.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    settings = Settings().settingList;
+    settings = settingList;
   }
 
   @override
@@ -32,11 +32,12 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       body: ListView.builder(
-        itemCount: Settings().settingList.length,
+        itemCount: settingList.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(settings[index]!),
+            title: Text(settings[settings.keys.elementAt(index)]!),
             leading: Icon(settings.entries.elementAt(index).key),
+            onTap: () {},
           );
         },
       ),

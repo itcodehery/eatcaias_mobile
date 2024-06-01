@@ -35,6 +35,7 @@ class _VendorLoginState extends State<VendorLogin> {
     _auth = supabase.auth.onAuthStateChange.listen((event) {
       final session = event.session;
       if (session != null) {
+        Navigator.of(context).pop();
         Navigator.of(context).pushReplacementNamed("/vendor_tree");
       }
     });

@@ -87,3 +87,12 @@ ToastFuture showCartToast(String message, BuildContext context) {
       backgroundColor: Colors.amber.shade600,
       textStyle: const TextStyle(color: Colors.black, fontSize: 14));
 }
+
+Map<IconData, String> settingList = {
+  Icons.person: 'Profile',
+  Icons.notifications: 'Notifications',
+  Icons.lock: 'Privacy',
+  Icons.language: 'Language',
+};
+
+EdgeInsets dialogPadding = const EdgeInsets.all(16.0);

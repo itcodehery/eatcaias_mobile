@@ -10,11 +10,6 @@ class VendorHome extends StatefulWidget {
 }
 
 class _VendorHomeState extends State<VendorHome> {
-  //controller
-  final searchController = TextEditingController();
-  String shopName = "";
-  Future<List<Map<String, dynamic>>>? shopItems;
-
   //initState
   @override
   void initState() {
@@ -22,12 +17,66 @@ class _VendorHomeState extends State<VendorHome> {
     super.initState();
   }
 
+  //controller
+  final searchController = TextEditingController();
+  late Map<String, dynamic> _shopDetails = {};
+  late List<Map<String, dynamic>> _shopItems = [];
+
+  //newItemDetails
+  final newItemNameController = TextEditingController();
+  final newItemDescriptionController = TextEditingController();
+  final newItemPriceController = TextEditingController();
+
   //get details
   Future<void> _fetchDetails() async {
     try {
-      final userId = supabase.auth.currentUser!.id;
-      final data =
-          await supabase.from('profiles').select().eq('id', userId).single();
+      final useremail = supabase.auth.currentUser!.email;
+      final data = await supabase
+          .from('vendor_user')
+          .select()
+          .eq('email', useremail!)
+          .single();
+
+      if (data.isNotEmpty) {
+        setState(() {
+          _shopDetails = data;
+        });
+        final items = await supabase
+            .from('menu_item')
+            .select()
+            .eq('shop_name', data["shop_name"]);
+        setState(() {
+          _shopItems = items;
+        });
+      }
+    } on PostgrestException catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: const Text('Unexpected error occurred'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    }
+  }
+
+  //addItemToDatabase
+  Future<void> _addItemToDatabase() async {
+    try {
+      await supabase.from('menu_item').upsert([
+        {
+          'shop_name': _shopDetails["shop_name"],
+          'item_name': 'item_name',
+          'description': 'description',
+          'price': 'price',
+        }
+      ]);
     } on PostgrestException catch (error) {
       if (mounted) {
         SnackBar(
@@ -58,36 +107,55 @@ class _VendorHomeState extends State<VendorHome> {
                   },
                   icon: const Icon(Icons.account_circle_outlined))
             ],
-            bottom: const PreferredSize(
-              preferredSize: Size.fromHeight(72),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(72),
               child: ListTile(
                 tileColor: Colors.amber,
-                title: Text("Mayur's Paradise"),
-                subtitle: Text("Manage your Store"),
+                title: Text(_shopDetails["shop_name"] ?? "",
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: brownTextStyle.color,
+                    )),
+                subtitle: _shopDetails.isNotEmpty
+                    ? const Text("Manage your Store")
+                    : null,
               ),
             )),
         body: Column(
           children: [
-            const Padding(
-                padding: EdgeInsets.all(16.0), child: Text('Store Items')),
+            const ListTile(
+              title: Text('Store Items'),
+            ),
             Expanded(
-              child: ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text("Item $index"),
-                    subtitle: Text("Description of Item $index"),
-                    trailing: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.edit),
-                    ),
-                  );
-                },
-              ),
+              child: _shopItems.isNotEmpty
+                  ? ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: _shopItems.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(
+                              _shopItems[index]["item_name"] ?? "Loading..."),
+                          subtitle:
+                              Text(_shopItems[index]["description"] ?? ""),
+                          trailing: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.edit),
+                          ),
+                        );
+                      },
+                    )
+                  : const Center(child: CircularProgressIndicator()),
             ),
           ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.of(context).pushNamed("/add_item");
+          },
+          icon: const Icon(Icons.add),
+          label: const Text('Add Item'),
         ));
   }
 }
