@@ -1,8 +1,10 @@
 import 'package:Eat.Caias/pages/common/four_o_four.dart';
+import 'package:Eat.Caias/pages/studteach/search_page.dart';
+import 'package:get/get.dart';
 import 'package:Eat.Caias/pages/common/settings_page.dart';
 import 'package:Eat.Caias/pages/common/splash_page.dart';
 import 'package:Eat.Caias/pages/profile_page.dart';
-import 'package:Eat.Caias/pages/studteach/cart_page.dart';
+import 'package:Eat.Caias/pages/studteach/cart/cart_page.dart';
 import 'package:Eat.Caias/pages/studteach/home.dart';
 import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
 import 'package:Eat.Caias/pages/studteach/studlogin.dart';
@@ -32,9 +34,10 @@ Future<void> main() async {
 
 class EatCAIAS extends StatelessWidget {
   const EatCAIAS({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Eat.CAIAS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -45,6 +48,7 @@ class EatCAIAS extends StatelessWidget {
       routes: {
         "/home": (context) => const Home(),
         "loginas": (context) => const UsertypePage(),
+        "/search": (context) => const SearchPage(),
         "/vendorlogin": (context) => const VendorLogin(),
         "/login": (context) => const Studlogin(),
         "/widget_tree": (context) => const WidgetTree(),

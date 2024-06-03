@@ -79,6 +79,26 @@ SnackBar errorSnackbar(String errorMessage) {
   );
 }
 
+SnackBar normalSnackBar(String message) {
+  return SnackBar(
+    behavior: SnackBarBehavior.floating,
+    duration: const Duration(seconds: 6),
+    backgroundColor: Colors.amber,
+    content: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Icon(Icons.info_outline),
+        const SizedBox(width: 10),
+        Text(
+          message,
+          style: brownTextStyle,
+        ),
+      ],
+    ),
+  );
+}
+
 ToastFuture showCartToast(String message, BuildContext context) {
   return showToast(message,
       context: context,
@@ -96,3 +116,12 @@ Map<IconData, String> settingList = {
 };
 
 EdgeInsets dialogPadding = const EdgeInsets.all(16.0);
+
+const mainButtonsStyle = ButtonStyle(
+  fixedSize: MaterialStatePropertyAll(Size(150, 50)),
+  minimumSize: MaterialStatePropertyAll(Size(120, 40)),
+  elevation: MaterialStatePropertyAll(0),
+  shape: MaterialStatePropertyAll(
+    RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+  ),
+);

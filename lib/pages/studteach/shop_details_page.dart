@@ -1,8 +1,7 @@
 import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/provider/cart_provider.dart';
+import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ShopDetailsPage extends StatefulWidget {
@@ -91,6 +90,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cartController = Get.put(CartController());
     return Scaffold(
       appBar: AppBar(
         title: const Text("Details"),
@@ -120,7 +120,9 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(_shopDetails['description'] ?? "")
+                        _shopDetails['description'] != null
+                            ? Text(_shopDetails['description'])
+                            : const LinearProgressIndicator(),
                       ]),
                 ),
               )),
@@ -195,7 +197,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
           ],
         ),
         onTap: () {
-          int itemCount = 0;
+          var itemCount = 0.obs;
           showDialog(
               context: context,
               builder: (context) => Dialog(
@@ -206,14 +208,36 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: const ButtonStyle(
-                                padding:
-                                    MaterialStatePropertyAll(EdgeInsets.zero)),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: const ButtonStyle(
+                                    padding: MaterialStatePropertyAll(
+                                        EdgeInsets.zero)),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                  onPressed: () {
+                                    if (itemCount.value != 0) {
+                                      Get.find<CartController>().addToCart(
+                                          _shopItems[index]["item_name"]
+                                              as String,
+                                          itemCount.value,
+                                          _shopItems[index]["price"] as int,
+                                          widget.shopName);
+                                      showCartToast(
+                                          '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
+                                          context);
+                                    } else {
+                                      showCartToast("Quantity is nil", context);
+                                    }
+                                  },
+                                  child: const Text("Add")),
+                            ],
                           ),
                           _shopItems[index]["image_url"] != null
                               ? Padding(
@@ -263,7 +287,14 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                       onPressed: () {
                                         setState(() {
                                           if (itemCount > 0) {
-                                            itemCount--;
+                                            setState(() {
+                                              itemCount = RxInt(0);
+                                            });
+                                            Get.find<CartController>()
+                                                .removeFromCart(
+                                                    _shopItems[index]
+                                                            ["item_name"]
+                                                        as String);
                                             showCartToast(
                                               "${_shopItems[index]["item_name"]! as String} removed from cart",
                                               context,
@@ -277,8 +308,9 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                         setState(() {
                                           itemCount++;
                                         });
+
                                         showCartToast(
-                                            "${_shopItems[index]["item_name"]! as String} (x$itemCount) added to cart",
+                                            "${_shopItems[index]["item_name"]! as String} (x$itemCount)",
                                             context);
                                       },
                                       icon: const Icon(Icons.add)),
@@ -286,6 +318,10 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                               ),
                             ],
                           ),
+                          const Divider(),
+                          const Center(
+                            child: Text("Press 'Add' to Add Item to Cart"),
+                          )
                         ],
                       ),
                     ),
