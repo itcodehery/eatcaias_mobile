@@ -1,9 +1,9 @@
 import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
-import 'package:Eat.Caias/provider/cart_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Home extends StatefulWidget {
@@ -14,23 +14,9 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  //constants
-  // final _mainButtonsStyle = const ButtonStyle(
-  //   fixedSize: MaterialStatePropertyAll(Size(150, 50)),
-  //   minimumSize: MaterialStatePropertyAll(Size(120, 40)),
-  //   elevation: MaterialStatePropertyAll(0),
-  //   shape: MaterialStatePropertyAll(
-  //     RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.all(Radius.circular(5))),
-  //   ),
-  // );
-
+  //variables
   String? offer;
-
   late List<Map<String, dynamic>> _listOfShops = [];
-
-  //controller
-  final searchController = TextEditingController();
 
   //fetch shops
   Future<void> _fetchShops() async {
@@ -86,7 +72,6 @@ class HomeState extends State<Home> {
               child: Column(
                 children: [
                   SearchBar(
-                    controller: searchController,
                     hintText: 'Search for food or canteens',
                     leading: const Row(
                       children: [
@@ -95,6 +80,7 @@ class HomeState extends State<Home> {
                       ],
                     ),
                     elevation: const MaterialStatePropertyAll(2),
+                    onTap: () => Navigator.of(context).pushNamed('/search'),
                   ),
                 ],
               ),
@@ -194,8 +180,6 @@ class HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).pushNamed('/cart');
-          ScaffoldMessenger.of(context).showSnackBar(achievementSnackbar(
-              "Gobblin' Time", "Opened Cart for the First Time"));
         },
         label: const Text('My Cart'),
         icon: const Icon(Icons.shopping_basket_outlined),
@@ -248,12 +232,5 @@ class HomeState extends State<Home> {
             );
           }),
     );
-  }
-
-  //dispose
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
   }
 }
