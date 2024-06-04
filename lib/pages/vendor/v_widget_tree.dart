@@ -1,4 +1,4 @@
-import 'package:Eat.Caias/pages/studteach/ticket_list_page.dart';
+import 'package:Eat.Caias/pages/studteach/tickets/ticket_list_page.dart';
 import 'package:Eat.Caias/pages/vendor/my_store.dart';
 import 'package:Eat.Caias/pages/vendor/orders_page.dart';
 import 'package:Eat.Caias/pages/vendor/vendor_home.dart';

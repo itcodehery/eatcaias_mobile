@@ -208,6 +208,9 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const SizedBox(
+                            width: double.infinity,
+                          ),
                           Row(
                             children: [
                               IconButton(

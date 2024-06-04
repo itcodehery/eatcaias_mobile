@@ -98,6 +98,11 @@ class ProfilePageState extends State<ProfilePage> {
             ),
             const Divider(),
             ListTile(
+              leading: const Icon(Icons.celebration_outlined),
+              title: const Text('Achievements'),
+              onTap: () {},
+            ),
+            ListTile(
               leading: const Icon(Icons.logout),
               onTap: () {
                 showDialog(
