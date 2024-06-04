@@ -1,5 +1,6 @@
 import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
+import 'package:Eat.Caias/pages/studteach/tickets/ticket_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -50,68 +51,73 @@ class _CartPageState extends State<CartPage> {
           }),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return Dialog(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Text('Order Confirmation',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                )),
-                          ),
-                        ),
-                        const ListTile(
-                            title: Text(
-                                'Are you sure you want to place this order?')),
-                        const Divider(),
-                        ListTile(
-                          title: const Text('Total Price:'),
-                          trailing: Text(
-                            '₹${cartController.totalCartPrice}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+          if (cartController.totalCartPrice != 0) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text('Order Confirmation',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  )),
                             ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            const Spacer(),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('No'),
+                          const ListTile(
+                              title: Text(
+                                  'Are you sure you want to place this order?')),
+                          const Divider(),
+                          ListTile(
+                            title: const Text('Total Price:'),
+                            trailing: Text(
+                              '₹${cartController.totalCartPrice}',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Get.find<CartController>().purgeCart();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    normalSnackBar(
-                                        'Order placed successfully!'));
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Yes'),
-                            ),
-                          ],
-                        )
-                      ],
+                          ),
+                          Row(
+                            children: [
+                              const Spacer(),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('No'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Get.find<CartController>().purgeCart();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      normalSnackBar(
+                                          'Order placed successfully!'));
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Yes'),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              });
+                  );
+                });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                normalSnackBar('Add some items to cart to place order!'));
+          }
         },
         icon: const Icon(Icons.shopping_cart_checkout),
         label: Obx(() => Text(' ₹${cartController.totalCartPrice}')),
@@ -137,27 +143,36 @@ class CartListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       child: Card(
-        elevation: 1,
+        elevation: 0,
+        color: Colors.amber.shade100,
         child: ListTile(
-          title: Text(title),
+          title: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           subtitle: Text('x $quantity  |  from $shopName'),
           leading: IconButton(
             icon: const Icon(Icons.remove_circle_outline),
+            color: Colors.white,
+            style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.brown)),
             onPressed: () {
               Get.find<CartController>().removeFromCart(title);
+              Get.find<TicketController>();
               showCartToast('$title (x$quantity) removed from Cart', context);
             },
           ),
           trailing: Text(
             '₹ $price',
             style: TextStyle(
-              color: Colors.amber.shade800,
+              color: Colors.brown.shade800,
               fontWeight: FontWeight.bold,
-              fontSize: 20,
+              fontSize: 22,
             ),
           ),
+          onTap: () {},
         ),
       ),
     );

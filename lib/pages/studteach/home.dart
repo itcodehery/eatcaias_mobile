@@ -1,8 +1,9 @@
 import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
-
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -164,10 +165,20 @@ class HomeState extends State<Home> {
             const ListTile(
               title: Text('Browse through Canteens'),
             ),
+            // SizedBox(
+            //   height: MediaQuery.of(context).size.height * 0.8,
+            //   child: ListView.builder(
+            //     physics: const NeverScrollableScrollPhysics(),
+            //     itemCount: _listOfShops.length,
+            //     itemBuilder: (context, index) {
+            //       return getCustomListTile(index);
+            //     },
+            //   ),
+            // )
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.8,
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
+              child: MasonryGridView.count(
+                crossAxisCount: 2,
                 itemCount: _listOfShops.length,
                 itemBuilder: (context, index) {
                   return getCustomListTile(index);
@@ -189,7 +200,8 @@ class HomeState extends State<Home> {
 
   Widget getCustomListTile(int index) {
     return Card(
-      color: Colors.white,
+      // color: Colors.random,
+      color: Colors.amber.withOpacity(0.2),
       elevation: 0,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
@@ -198,30 +210,26 @@ class HomeState extends State<Home> {
             width: 1,
           )),
       child: ListTile(
-          title: Text(
-            _listOfShops[index]["shop_name"] as String,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
+          title: Row(
+            children: [
+              SizedBox(
+                width: 130,
+                child: Text(
+                  _listOfShops[index]["shop_name"] as String,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              const Spacer(),
+              const Icon(Icons.chevron_right),
+            ],
           ),
           subtitle: Text(
             _listOfShops[index]["description"] as String,
           ),
-          trailing: ElevatedButton(
-              style: const ButtonStyle(
-                  elevation: MaterialStatePropertyAll(0),
-                  backgroundColor: MaterialStatePropertyAll(
-                      Color.fromARGB(255, 255, 151, 144)),
-                  padding: MaterialStatePropertyAll(EdgeInsets.all(0)),
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                  )),
-                  fixedSize: MaterialStatePropertyAll(Size.square(50))),
-              onPressed: () {},
-              child: const Icon(
-                Icons.chevron_right,
-                color: Colors.white,
-              )),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
