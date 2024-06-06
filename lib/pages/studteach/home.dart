@@ -209,7 +209,7 @@ class HomeState extends State<Home> {
           title: Row(
             children: [
               SizedBox(
-                width: 130,
+                width: 100,
                 child: Text(
                   _listOfShops[index]["shop_name"] as String,
                   style: const TextStyle(

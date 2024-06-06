@@ -1,4 +1,5 @@
 import 'package:Eat.Caias/pages/common/four_o_four.dart';
+import 'package:Eat.Caias/pages/studteach/achievements_page.dart';
 import 'package:Eat.Caias/pages/studteach/search_page.dart';
 import 'package:get/get.dart';
 import 'package:Eat.Caias/pages/common/settings_page.dart';
@@ -56,6 +57,7 @@ class EatCAIAS extends StatelessWidget {
         "/add_item": (context) => const AddItemPage(),
         "/cart": (context) => const CartPage(),
         "/404": (context) => const FourOFour(),
+        "/achievements": (context) => const AchievementsPage(),
       },
       onUnknownRoute: (settings) {
         Navigator.of(context).pushReplacementNamed("/404");

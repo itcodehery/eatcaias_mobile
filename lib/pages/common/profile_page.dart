@@ -100,7 +100,9 @@ class ProfilePageState extends State<ProfilePage> {
             ListTile(
               leading: const Icon(Icons.celebration_outlined),
               title: const Text('Achievements'),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushNamed("/achievements");
+              },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
