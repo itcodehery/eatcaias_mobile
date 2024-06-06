@@ -72,16 +72,12 @@ class HomeState extends State<Home> {
               padding: const EdgeInsets.all(14.0),
               child: Column(
                 children: [
-                  SearchBar(
-                    hintText: 'Search for food or canteens',
-                    leading: const Row(
-                      children: [
-                        SizedBox(width: 10),
-                        Icon(Icons.search),
-                      ],
+                  Card(
+                    child: ListTile(
+                      title: const Text('Search for food or canteens!'),
+                      leading: const Icon(Icons.search),
+                      onTap: () => Navigator.of(context).pushNamed('/search'),
                     ),
-                    elevation: const MaterialStatePropertyAll(2),
-                    onTap: () => Navigator.of(context).pushNamed('/search'),
                   ),
                 ],
               ),
@@ -176,7 +172,7 @@ class HomeState extends State<Home> {
             //   ),
             // )
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.8,
+              height: MediaQuery.of(context).size.height * 0.6,
               child: MasonryGridView.count(
                 crossAxisCount: 2,
                 itemCount: _listOfShops.length,
