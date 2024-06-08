@@ -54,7 +54,6 @@ class EatCAIAS extends StatelessWidget {
         "/vwidget_tree": (context) => const VWidgetTree(),
         "/profile": (context) => const ProfilePage(),
         "/settings": (context) => const SettingsPage(),
-        "/add_item": (context) => const AddItemPage(),
         "/cart": (context) => const CartPage(),
         "/404": (context) => const FourOFour(),
         "/achievements": (context) => const AchievementsPage(),

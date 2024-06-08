@@ -1,4 +1,5 @@
 import 'package:Eat.Caias/pages/studteach/home.dart';
+import 'package:Eat.Caias/pages/studteach/leaderboard/leaderboards_page.dart';
 import 'package:Eat.Caias/pages/studteach/tickets/ticket_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,6 +19,7 @@ class _WidgetTreeState extends State<WidgetTree> {
       body: [
         const Home(),
         const TicketListPage(),
+        const LeaderboardsPage(),
       ][_currentIndex],
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
@@ -36,7 +38,12 @@ class _WidgetTreeState extends State<WidgetTree> {
               selectedIcon: FaIcon(FontAwesomeIcons.ticket),
               icon: FaIcon(FontAwesomeIcons.ticket),
               label: "Tickets",
-            )
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.leaderboard_outlined),
+              selectedIcon: Icon(Icons.leaderboard_rounded),
+              label: "Leaderboards",
+            ),
           ]),
     );
   }

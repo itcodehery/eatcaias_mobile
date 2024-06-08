@@ -1,3 +1,4 @@
+import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/helper/achievements_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -27,9 +28,23 @@ class _AchievementsPageState extends State<AchievementsPage> {
 
   Widget achievementsListTile(
       String name, String description, String achievedOn) {
-    return ListTile(
-      title: Text(name),
-      subtitle: Text(description + achievedOn),
+    return Padding(
+      padding: cardPadding,
+      child: Card(
+        color: Colors.amber.shade100,
+        child: ListTile(
+          title: Row(
+            children: [
+              const Icon(Icons.emoji_events_outlined),
+              const SizedBox(width: 10),
+              Text(name),
+            ],
+          ),
+          subtitle: Text(description),
+          trailing: Text(achievedOn),
+          onTap: () {},
+        ),
+      ),
     );
   }
 }

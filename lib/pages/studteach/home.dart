@@ -27,6 +27,8 @@ class HomeState extends State<Home> {
       if (data.isNotEmpty) {
         setState(() {
           _listOfShops = data;
+          _listOfShops.sort(
+              (a, b) => a["shop_name"].toString().compareTo(b["shop_name"]));
         });
       } else {
         return;
@@ -83,6 +85,7 @@ class HomeState extends State<Home> {
               ),
             )),
         actions: [
+          pointsTag(21),
           IconButton(
               onPressed: () {
                 Navigator.of(context).pushNamed("/profile");
@@ -158,27 +161,67 @@ class HomeState extends State<Home> {
                 ),
               ),
             ),
-            const ListTile(
-              title: Text('Browse through Canteens'),
-            ),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height * 0.8,
-            //   child: ListView.builder(
-            //     physics: const NeverScrollableScrollPhysics(),
-            //     itemCount: _listOfShops.length,
-            //     itemBuilder: (context, index) {
-            //       return getCustomListTile(index);
-            //     },
-            //   ),
-            // )
+            _listOfShops.isEmpty
+                ? Padding(
+                    padding: cardPadding,
+                    child: const LinearProgressIndicator(),
+                  )
+                : ListTile(
+                    title: const Text('Browse through Canteens'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.info_outline_rounded),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: Padding(
+                                padding: dialogPadding,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      'Canteens',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      'Browse through the list of canteens available in the campus. Click on a canteen to view the menu.',
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Spacer(),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: MasonryGridView.count(
-                crossAxisCount: 2,
-                itemCount: _listOfShops.length,
-                itemBuilder: (context, index) {
-                  return getCustomListTile(index);
-                },
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: Padding(
+                padding: cardPadding,
+                child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _listOfShops.length,
+                  itemBuilder: (context, index) {
+                    return getCustomListTile(index);
+                  },
+                ),
               ),
             )
           ],
@@ -195,22 +238,22 @@ class HomeState extends State<Home> {
   }
 
   Widget getCustomListTile(int index) {
-    return Card(
-      // color: Colors.random,
-      color: Colors.amber.withOpacity(0.2),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-          side: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1,
-          )),
-      child: ListTile(
-          title: Row(
-            children: [
-              SizedBox(
-                width: 100,
-                child: Text(
+    return Padding(
+      padding: cardPadding,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+            Colors.amber.shade100,
+            Colors.orange.shade100,
+          ]),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ListTile(
+            title: Row(
+              children: [
+                isOpenTag(_listOfShops[index]["is_open"] as bool),
+                const SizedBox(width: 10),
+                Text(
                   _listOfShops[index]["shop_name"] as String,
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
@@ -218,23 +261,22 @@ class HomeState extends State<Home> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
-              ),
-              const Spacer(),
-              const Icon(Icons.chevron_right),
-            ],
-          ),
-          subtitle: Text(
-            _listOfShops[index]["description"] as String,
-          ),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ShopDetailsPage(
-                  shopName: _listOfShops[index]["shop_name"] as String,
+              ],
+            ),
+            subtitle: Text(
+              _listOfShops[index]["description"] as String,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ShopDetailsPage(
+                    shopName: _listOfShops[index]["shop_name"] as String,
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+      ),
     );
   }
 }

@@ -115,7 +115,8 @@ Map<IconData, String> settingList = {
   Icons.language: 'Language',
 };
 
-EdgeInsets dialogPadding = const EdgeInsets.all(16.0);
+EdgeInsets dialogPadding =
+    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0);
 
 const mainButtonsStyle = ButtonStyle(
   fixedSize: MaterialStatePropertyAll(Size(150, 50)),
@@ -125,3 +126,59 @@ const mainButtonsStyle = ButtonStyle(
     RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
   ),
 );
+
+EdgeInsets cardPadding = const EdgeInsets.symmetric(vertical: 2, horizontal: 6);
+
+Widget pointsTag(int points) {
+  return Padding(
+    padding: cardPadding,
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: InkWell(
+        onTap: () {},
+        child: Text(
+          '🔥 $points points',
+          style: const TextStyle(),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget isOpenTag(bool isOpen) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+    child: Container(
+        decoration: BoxDecoration(
+          color: isOpen ? Colors.white : Colors.orange.shade50,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            child: Text(
+              isOpen ? "Open" : "Closed",
+              style: const TextStyle(color: Colors.black, fontSize: 14),
+            ))),
+  );
+}
+
+Widget isVegTag(bool isVeg) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+    child: Container(
+        decoration: BoxDecoration(
+          color: isVeg ? Colors.green.shade600 : Colors.red.shade800,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            child: Text(
+              isVeg ? "Veg" : "Non-Veg",
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ))),
+  );
+}

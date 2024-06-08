@@ -37,6 +37,9 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
       if (shopItems.isNotEmpty) {
         setState(() {
           _shopItems = shopItems;
+          //sort by ascending order
+          _shopItems.sort(
+              (a, b) => a["item_name"].toString().compareTo(b["item_name"]));
         });
       } else {
         return;
@@ -122,17 +125,23 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                         ),
                         _shopDetails['description'] != null
                             ? Text(_shopDetails['description'])
-                            : const LinearProgressIndicator(),
+                            : const Text("Loading canteen details..."),
+                        const SizedBox(height: 10),
+                        _shopDetails['is_open'] != null
+                            ? isOpenTag(_shopDetails['is_open']!)
+                            : const SizedBox(),
                       ]),
                 ),
               )),
-          ListTile(
-            title: const Text('Items available'),
-            trailing: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.filter_alt_outlined),
-            ),
-          ),
+          _shopItems.isNotEmpty
+              ? ListTile(
+                  title: const Text('Items available'),
+                  trailing: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.filter_alt_outlined),
+                  ),
+                )
+              : const SizedBox(),
           _shopItems.isNotEmpty
               ? SizedBox(
                   height: MediaQuery.of(context).size.height * 0.6,
@@ -148,25 +157,14 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                         ),
                 )
               : const Center(
-                  child: Text("No items available"),
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text("No items available"),
+                  ),
                 ),
         ],
       ),
     );
-  }
-
-  Widget isVegTag(bool isVeg) {
-    return Container(
-        decoration: BoxDecoration(
-          color: isVeg ? Colors.green.shade600 : Colors.red.shade800,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-            child: Text(
-              isVeg ? "Veg" : "Non-Veg",
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-            )));
   }
 
   Widget getCustomListTile(int index) {
@@ -263,17 +261,12 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                 )
                               : const SizedBox(),
                           // const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(_shopItems[index]["item_name"]! as String,
-                                  style: const TextStyle(
-                                    fontSize: 24,
-                                  ),
-                                  overflow: TextOverflow.ellipsis),
-                              isVegTag(_shopItems[index]["is_veg"] as bool),
-                            ],
-                          ),
+                          Text(_shopItems[index]["item_name"]! as String,
+                              style: const TextStyle(
+                                fontSize: 24,
+                              ),
+                              overflow: TextOverflow.ellipsis),
+                          isVegTag(_shopItems[index]["is_veg"] as bool),
                           Text(_shopItems[index]["description"]! as String),
                           const Divider(),
                           Row(
