@@ -116,7 +116,7 @@ Map<IconData, String> settingList = {
 };
 
 EdgeInsets dialogPadding =
-    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0);
+    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0);
 
 const mainButtonsStyle = ButtonStyle(
   fixedSize: MaterialStatePropertyAll(Size(150, 50)),
@@ -134,7 +134,7 @@ Widget pointsTag(int points) {
     padding: cardPadding,
     child: Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: Colors.black.withAlpha(10),
         borderRadius: BorderRadius.circular(5),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -154,14 +154,16 @@ Widget isOpenTag(bool isOpen) {
     padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
     child: Container(
         decoration: BoxDecoration(
-          color: isOpen ? Colors.white : Colors.orange.shade50,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(5),
         ),
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
             child: Text(
               isOpen ? "Open" : "Closed",
-              style: const TextStyle(color: Colors.black, fontSize: 14),
+              style: TextStyle(
+                  color: isOpen ? Colors.green.shade800 : Colors.red.shade800,
+                  fontSize: 14),
             ))),
   );
 }
@@ -180,5 +182,21 @@ Widget isVegTag(bool isVeg) {
               isVeg ? "Veg" : "Non-Veg",
               style: const TextStyle(color: Colors.white, fontSize: 14),
             ))),
+  );
+}
+
+ListTile vendorListTile(
+    Map<String, dynamic> shopDetails, Map<String, dynamic> vendorUserDetails) {
+  return ListTile(
+    tileColor: Colors.amber,
+    title: Text(shopDetails["shop_name"] ?? "",
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: brownTextStyle.color,
+        )),
+    subtitle: shopDetails.isNotEmpty
+        ? Text("Manage your store, ${vendorUserDetails["vendorname"]}!")
+        : null,
   );
 }

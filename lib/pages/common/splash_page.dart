@@ -1,4 +1,6 @@
+import 'package:Eat.Caias/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashPage extends StatefulWidget {
@@ -7,8 +9,6 @@ class SplashPage extends StatefulWidget {
   @override
   State<SplashPage> createState() => _SplashPageState();
 }
-
-final supabase = Supabase.instance.client;
 
 class _SplashPageState extends State<SplashPage> {
   @override
@@ -24,13 +24,14 @@ class _SplashPageState extends State<SplashPage> {
     if (!mounted) return;
     if (session != null) {
       if (supabase.auth.currentUser!.email!.contains("caias.in")) {
-        Navigator.of(context).pushReplacementNamed("/widget_tree");
+        Get.offAndToNamed("/widget_tree");
       } else {
-        Navigator.of(context).pushReplacementNamed("/vwidget_tree");
+        Get.offAndToNamed("/vwidget_tree");
       }
     } else {
-      Navigator.of(context).pushReplacementNamed("/loginas");
+      Get.offAndToNamed("/loginas");
     }
+    return;
   }
 
   @override

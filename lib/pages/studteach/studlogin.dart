@@ -39,6 +39,7 @@ class _StudloginState extends State<Studlogin> {
     _auth = supabase.auth.onAuthStateChange.listen((event) {
       final session = event.session;
       if (session != null) {
+        Navigator.of(context).pop();
         Navigator.of(context).pushReplacementNamed("/widget_tree");
       }
     });

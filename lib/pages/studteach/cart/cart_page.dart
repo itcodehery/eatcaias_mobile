@@ -146,7 +146,7 @@ class CartListTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       child: Card(
         elevation: 0,
-        color: Colors.amber.shade100,
+        color: Colors.amber.shade100.withAlpha(50),
         child: ListTile(
           title: Text(
             title,

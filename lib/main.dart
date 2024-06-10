@@ -1,4 +1,5 @@
 import 'package:Eat.Caias/pages/common/four_o_four.dart';
+import 'package:Eat.Caias/pages/common/splash_page.dart';
 import 'package:Eat.Caias/pages/studteach/achievements_page.dart';
 import 'package:Eat.Caias/pages/studteach/search_page.dart';
 import 'package:get/get.dart';
@@ -43,10 +44,11 @@ class EatCAIAS extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
           useMaterial3: true,
           fontFamily: 'Outfit'),
-      home: const UsertypePage(),
+      home: const SplashPage(),
       routes: {
         "/home": (context) => const Home(),
-        "loginas": (context) => const UsertypePage(),
+        "/splash": (context) => const SplashPage(),
+        "/loginas": (context) => const UsertypePage(),
         "/search": (context) => const SearchPage(),
         "/vendorlogin": (context) => const VendorLogin(),
         "/login": (context) => const Studlogin(),

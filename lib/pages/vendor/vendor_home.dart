@@ -2,6 +2,7 @@ import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/pages/vendor/add_item_page.dart';
 import 'package:Eat.Caias/pages/vendor/edit_item_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class VendorHome extends StatefulWidget {
@@ -54,6 +55,7 @@ class _VendorHomeState extends State<VendorHome> {
             .select()
             .eq('shop_name', data["shop_name"]);
         setState(() {
+          _shopItems = [];
           _shopItems = items;
           _shopItems.sort(
               (a, b) => a["item_name"].toString().compareTo(b["item_name"]));
@@ -120,19 +122,7 @@ class _VendorHomeState extends State<VendorHome> {
             ],
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(72),
-              child: ListTile(
-                tileColor: Colors.amber,
-                title: Text(_shopDetails["shop_name"] ?? "",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: brownTextStyle.color,
-                    )),
-                subtitle: _shopDetails.isNotEmpty
-                    ? Text(
-                        "Manage your store, ${_vendorUserDetails["vendorname"]}!")
-                    : null,
-              ),
+              child: vendorListTile(_shopDetails, _vendorUserDetails),
             )),
         body: Column(
           children: [
@@ -145,6 +135,18 @@ class _VendorHomeState extends State<VendorHome> {
                           MaterialStatePropertyAll(Colors.amber.shade100)),
                   onPressed: () {
                     _fetchDetails();
+                    Get.showSnackbar(const GetSnackBar(
+                        backgroundColor: Colors.amber,
+                        duration: Duration(seconds: 4),
+                        titleText: Text(
+                          'Refreshed!',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        messageText: Text('Store items refreshed!')));
                   },
                   icon: const Icon(Icons.refresh),
                   label: const Text('Refresh')),
@@ -172,17 +174,21 @@ class _VendorHomeState extends State<VendorHome> {
                           ),
                           trailing: const Icon(Icons.edit),
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => EditItemPage(
-                                shopName: _shopDetails["shop_name"],
-                                itemName: _shopItems[index]["item_name"],
-                                itemDescription: _shopItems[index]
-                                    ["description"],
-                                itemPrice: _shopItems[index]["price"] as int,
-                                isVeg: _shopItems[index]["is_veg"] as bool,
-                                isInStock: _shopItems[index]["is_inStock"],
-                              ),
-                            ));
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                  builder: (context) => EditItemPage(
+                                    shopName: _shopDetails["shop_name"],
+                                    itemName: _shopItems[index]["item_name"],
+                                    itemDescription: _shopItems[index]
+                                        ["description"],
+                                    itemPrice:
+                                        _shopItems[index]["price"] as int,
+                                    isVeg: _shopItems[index]["is_veg"] as bool,
+                                    isInStock: _shopItems[index]["is_inStock"],
+                                  ),
+                                ))
+                                .whenComplete(() => _fetchDetails());
+                            // after the changes have been done, it refreshes the page
                           },
                         );
                       },
@@ -197,10 +203,12 @@ class _VendorHomeState extends State<VendorHome> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  AddItemPage(shopName: _shopDetails["shop_name"]),
-            ));
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+                  builder: (context) =>
+                      AddItemPage(shopName: _shopDetails["shop_name"]),
+                ))
+                .whenComplete(() => _fetchDetails());
           },
           icon: const Icon(Icons.add),
           label: const Text('Add Item'),

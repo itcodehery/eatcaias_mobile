@@ -209,36 +209,14 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                           const SizedBox(
                             width: double.infinity,
                           ),
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                style: const ButtonStyle(
-                                    padding: MaterialStatePropertyAll(
-                                        EdgeInsets.zero)),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                  onPressed: () {
-                                    if (itemCount.value != 0) {
-                                      Get.find<CartController>().addToCart(
-                                          _shopItems[index]["item_name"]
-                                              as String,
-                                          itemCount.value,
-                                          _shopItems[index]["price"] as int,
-                                          widget.shopName);
-                                      showCartToast(
-                                          '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
-                                          context);
-                                    } else {
-                                      showCartToast("Quantity is nil", context);
-                                    }
-                                  },
-                                  child: const Text("Add")),
-                            ],
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: const ButtonStyle(
+                                padding:
+                                    MaterialStatePropertyAll(EdgeInsets.zero)),
                           ),
                           _shopItems[index]["image_url"] != null
                               ? Padding(
@@ -292,7 +270,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                             ["item_name"]
                                                         as String);
                                             showCartToast(
-                                              "${_shopItems[index]["item_name"]! as String} removed from cart",
+                                              "${_shopItems[index]["item_name"]! as String} quantity is 0",
                                               context,
                                             );
                                           }
@@ -315,9 +293,38 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                             ],
                           ),
                           const Divider(),
-                          const Center(
-                            child: Text("Press 'Add' to Add Item to Cart"),
-                          )
+
+                          TextButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Colors.orange.shade200),
+                                minimumSize: const MaterialStatePropertyAll(
+                                    Size(double.infinity, 40))),
+                            onPressed: () {
+                              if (itemCount.value != 0) {
+                                Get.find<CartController>().addToCart(
+                                    _shopItems[index]["item_name"] as String,
+                                    itemCount.value,
+                                    _shopItems[index]["price"] as int,
+                                    widget.shopName);
+                                showCartToast(
+                                    '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
+                                    context);
+                                Navigator.of(context).pop();
+                              } else {
+                                showCartToast("Quantity is nil", context);
+                              }
+                            },
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.shopping_cart_outlined),
+                                SizedBox(width: 10),
+                                Text("Add To Cart"),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 6),
                         ],
                       ),
                     ),

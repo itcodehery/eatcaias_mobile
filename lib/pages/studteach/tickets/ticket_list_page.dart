@@ -13,10 +13,7 @@ class _TicketListPageState extends State<TicketListPage> {
   late List<Map<String, dynamic>> _allTickets = [];
   Future<void> _fetchTickets() async {
     try {
-      final data = await supabase
-          .from('tickets')
-          .select()
-          .eq('user_id', supabase.auth.currentUser!.id);
+      final data = await supabase.from('tickets').select();
 
       if (data.isNotEmpty) {
         setState(() {
