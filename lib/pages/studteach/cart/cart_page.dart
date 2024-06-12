@@ -24,7 +24,7 @@ class _CartPageState extends State<CartPage> {
     cartController = Get.put(CartController());
     for (var element in cartController.cartItems) {
       if (!shopNameList.containsKey(element.shopName)) {
-        shopNameList[element.shopName] = element.totalPrice;
+        shopNameList[element.shopName] = 0;
       }
     }
   }
@@ -54,7 +54,7 @@ class _CartPageState extends State<CartPage> {
                           .elementAt(index)
                           .shopName] = shopNameList[
                               controller.cartItems.elementAt(index).shopName]! +
-                          controller.cartItems.elementAt(index).totalPrice;
+                          controller.cartItems.elementAt(index).price;
                       return CartListTile(
                         title: controller.cartItems.elementAt(index).title,
                         price: controller.cartItems.elementAt(index).totalPrice,
@@ -117,6 +117,7 @@ class _CartPageState extends State<CartPage> {
                               ),
                               TextButton(
                                 onPressed: () {
+                                  Navigator.of(context).pop();
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => ShopSelectionPage(
@@ -192,7 +193,6 @@ class CartListTile extends StatelessWidget {
               fontSize: 22,
             ),
           ),
-          onTap: () {},
         ),
       ),
     );
