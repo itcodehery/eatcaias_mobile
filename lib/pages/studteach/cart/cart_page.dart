@@ -1,5 +1,6 @@
 import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
+import 'package:Eat.Caias/pages/studteach/cart/shop_selection_page.dart';
 import 'package:Eat.Caias/pages/studteach/tickets/ticket_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,9 +15,22 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   late final dynamic cartController;
 
+  //shopname and price of the shop's items
+  late Map<String, int> shopNameList = {};
+
+  @override
+  void initState() {
+    super.initState();
+    cartController = Get.put(CartController());
+    for (var element in cartController.cartItems) {
+      if (!shopNameList.containsKey(element.shopName)) {
+        shopNameList[element.shopName] = element.totalPrice;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    cartController = Get.put(CartController());
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -36,6 +50,11 @@ class _CartPageState extends State<CartPage> {
                 ? ListView.builder(
                     itemCount: controller.cartItems.length,
                     itemBuilder: (context, index) {
+                      shopNameList[controller.cartItems
+                          .elementAt(index)
+                          .shopName] = shopNameList[
+                              controller.cartItems.elementAt(index).shopName]! +
+                          controller.cartItems.elementAt(index).totalPrice;
                       return CartListTile(
                         title: controller.cartItems.elementAt(index).title,
                         price: controller.cartItems.elementAt(index).totalPrice,
@@ -98,12 +117,13 @@ class _CartPageState extends State<CartPage> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  Get.find<CartController>().purgeCart();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      normalSnackBar(
-                                          'Order placed successfully!'));
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ShopSelectionPage(
+                                        shopNameList: shopNameList,
+                                      ),
+                                    ),
+                                  );
                                 },
                                 child: const Text('Yes'),
                               ),

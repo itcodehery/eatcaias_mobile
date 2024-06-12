@@ -1,6 +1,7 @@
 import 'package:Eat.Caias/pages/common/four_o_four.dart';
 import 'package:Eat.Caias/pages/common/splash_page.dart';
 import 'package:Eat.Caias/pages/studteach/achievements_page.dart';
+import 'package:Eat.Caias/pages/studteach/payments/payment_method_page.dart';
 import 'package:Eat.Caias/pages/studteach/search_page.dart';
 import 'package:get/get.dart';
 import 'package:Eat.Caias/pages/common/settings_page.dart';
