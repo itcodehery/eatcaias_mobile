@@ -129,11 +129,9 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                       ),
                       onPressed: () {
                         if (_method == PaymentMethod.upi) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => UpiInteractionPage(
-                                    shopName: widget.shopName,
-                                    totalPrice: widget.totalPrice,
-                                  )));
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
                         } else {
                           Navigator.pop(context, 'Cash on Delivery');
                         }

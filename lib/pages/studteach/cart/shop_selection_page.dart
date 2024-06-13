@@ -11,6 +11,10 @@ class ShopSelectionPage extends StatefulWidget {
 }
 
 class _ShopSelectionPageState extends State<ShopSelectionPage> {
+  Future<void> addToTicketDatabase() async {
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,14 +50,14 @@ class _ShopSelectionPageState extends State<ShopSelectionPage> {
                   ],
                 ),
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => PaymentMethodPage(
-                        shopName: widget.shopNameList.keys.elementAt(index),
-                        totalPrice: widget.shopNameList.values.elementAt(index),
-                      ),
-                    ),
-                  );
+                  // Navigator.of(context).push(
+                  //   MaterialPageRoute(
+                  //     builder: (context) => PaymentMethodPage(
+                  //       shopName: widget.shopNameList.keys.elementAt(index),
+                  //       totalPrice: widget.shopNameList.values.elementAt(index),
+                  //     ),
+                  //   ),
+                  // );
                 },
               ),
             ),

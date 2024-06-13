@@ -4,6 +4,7 @@ import 'package:Eat.Caias/pages/studteach/cart/shop_selection_page.dart';
 import 'package:Eat.Caias/pages/studteach/tickets/ticket_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -14,12 +15,70 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   late final dynamic cartController;
+  String? username;
 
   //shopname and price of the shop's items
   late Map<String, int> shopNameList = {};
+  Future<void> _fetchUsername() async {
+    try {
+      final user = supabase.auth.currentUser!;
+      final response = await supabase
+          .from('studteach_user')
+          .select()
+          .eq('email', user.email!)
+          .single();
+
+      if (response.isNotEmpty) {
+        setState(() {
+          username = (response['username'] ?? " ") as String;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Username is null')));
+      }
+    } on PostgrestException catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: const Text('Unexpected error occurred'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    }
+  }
+
+  //add to ticket database
+  Future<void> addToTicketDatabase(String itemNames, String shopName,
+      String username, int totalPrice) async {
+    try {
+      await supabase.from('ticket').insert([
+        {
+          'item_names': itemNames,
+          'shop_name': shopName,
+          'user_name': username,
+          'total_price': totalPrice,
+        }
+      ]);
+    } on PostgrestException catch (error) {
+      Get.showSnackbar(GetSnackBar(
+        message: error.message,
+      ));
+    } catch (error) {
+      Get.showSnackbar(const GetSnackBar(
+        message: "Please retry!",
+      ));
+    }
+  }
 
   @override
   void initState() {
+    _fetchUsername();
     super.initState();
     cartController = Get.put(CartController());
     for (var element in cartController.cartItems) {
@@ -125,6 +184,22 @@ class _CartPageState extends State<CartPage> {
                                       ),
                                     ),
                                   );
+                                  cartController = Get.find<CartController>();
+                                  if (username != null) {
+                                    for (var element
+                                        in cartController.cartItems) {
+                                      addToTicketDatabase(
+                                          element.title,
+                                          element.shopName,
+                                          username!,
+                                          element.totalPrice);
+                                    }
+                                    cartController.purgeCart();
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text('Username is null')));
+                                  }
                                 },
                                 child: const Text('Yes'),
                               ),
