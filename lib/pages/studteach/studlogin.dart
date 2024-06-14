@@ -4,7 +4,9 @@ import 'package:Eat.Caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:get/get.dart';
 import 'package:password_strength/password_strength.dart';
+import 'package:profanity_filter/profanity_filter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 enum AuthType { login, signIn }
@@ -181,9 +183,14 @@ class _StudloginState extends State<Studlogin> {
                                     replacementString: "-")
                               ],
                               validator: (value) {
-                                if (value == null && !isLogin) {
+                                var filter = ProfanityFilter();
+                                if (filter.hasProfanity(value!)) {
+                                  return "The username contains profanity!";
+                                }
+                                if (value.isEmpty && !isLogin) {
                                   return "The field is required!";
                                 }
+
                                 return null;
                               },
                             ),
@@ -204,10 +211,17 @@ class _StudloginState extends State<Studlogin> {
                     .signInWithPassword(
                         email: emailController.text,
                         password: passwordController.text)
-                    .then((value) => ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content:
-                                Text('Logged in as ${emailController.text}'))));
+                    .then((value) => Get.showSnackbar(GetSnackBar(
+                          margin: const EdgeInsets.all(8.0),
+                          backgroundColor: Colors.amber,
+                          message:
+                              "Welcome, ${emailController.text}! What would you like today?",
+                          title: "Logged in successfully!",
+                        )));
+                // .then((value) => ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(
+                //         content:
+                //             Text('Logged in as ${emailController.text}'))));
               } on AuthException catch (e) {
                 setState(() {
                   errorMessage = e.message;
@@ -220,7 +234,15 @@ class _StudloginState extends State<Studlogin> {
               await supabase.auth.signUp(
                   email: emailController.text,
                   password: passwordController.text,
-                  data: {"username": fullNameController.text});
+                  data: {
+                    "username": fullNameController.text
+                  }).then((value) => Get.showSnackbar(GetSnackBar(
+                    margin: const EdgeInsets.all(8.0),
+                    backgroundColor: Colors.amber,
+                    message:
+                        "Welcome, ${fullNameController.text}! What would you like today?",
+                    title: "Logged in successfully!",
+                  )));
             }
           }
         },

@@ -294,36 +294,40 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                           ),
                           const Divider(),
 
-                          TextButton(
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(
-                                    Colors.orange.shade200),
-                                minimumSize: const MaterialStatePropertyAll(
-                                    Size(double.infinity, 40))),
-                            onPressed: () {
-                              if (itemCount.value != 0) {
-                                Get.find<CartController>().addToCart(
-                                    _shopItems[index]["item_name"] as String,
-                                    itemCount.value,
-                                    _shopItems[index]["price"] as int,
-                                    widget.shopName);
-                                showCartToast(
-                                    '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
-                                    context);
-                                Navigator.of(context).pop();
-                              } else {
-                                showCartToast("Quantity is nil", context);
-                              }
-                            },
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.shopping_cart_outlined),
-                                SizedBox(width: 10),
-                                Text("Add To Cart"),
-                              ],
-                            ),
-                          ),
+                          _shopDetails['is_open']
+                              ? TextButton(
+                                  style: ButtonStyle(
+                                      backgroundColor: MaterialStatePropertyAll(
+                                          Colors.orange.shade200),
+                                      minimumSize:
+                                          const MaterialStatePropertyAll(
+                                              Size(double.infinity, 40))),
+                                  onPressed: () {
+                                    if (itemCount.value != 0) {
+                                      Get.find<CartController>().addToCart(
+                                          _shopItems[index]["item_name"]
+                                              as String,
+                                          itemCount.value,
+                                          _shopItems[index]["price"] as int,
+                                          widget.shopName);
+                                      showCartToast(
+                                          '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
+                                          context);
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      showCartToast("Quantity is nil", context);
+                                    }
+                                  },
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.shopping_cart_outlined),
+                                      SizedBox(width: 10),
+                                      Text("Add To Cart"),
+                                    ],
+                                  ),
+                                )
+                              : const Center(child: Text("Shop is closed")),
                           const SizedBox(height: 6),
                         ],
                       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Eat.Caias/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:ticket_material/ticket_material.dart';
 
 class TicketListPage extends StatefulWidget {
   const TicketListPage({Key? key}) : super(key: key);
@@ -11,11 +10,13 @@ class TicketListPage extends StatefulWidget {
 }
 
 class _TicketListPageState extends State<TicketListPage> {
+  String? username;
   List<Map<String, dynamic>>? _allTickets;
   Future<void> _fetchTickets() async {
     try {
       debugPrint("inside fetchTickets");
-      final data = await supabase.from('ticket').select();
+      final data =
+          await supabase.from('ticket').select().eq('user_name', username!);
 
       if (data.isNotEmpty) {
         debugPrint("data is not empty");
@@ -37,8 +38,43 @@ class _TicketListPageState extends State<TicketListPage> {
     }
   }
 
+  Future<void> _fetchUsername() async {
+    try {
+      final user = supabase.auth.currentUser!;
+      final response = await supabase
+          .from('studteach_user')
+          .select()
+          .eq('email', user.email!)
+          .single();
+
+      if (response.isNotEmpty) {
+        setState(() {
+          username = (response['username'] ?? " ") as String;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Username is null')));
+      }
+    } on PostgrestException catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: const Text('Unexpected error occurred'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
+    _fetchUsername();
     _fetchTickets();
     super.initState();
   }
@@ -46,94 +82,82 @@ class _TicketListPageState extends State<TicketListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Row(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const Text('eat.caias / '),
+            Text(
+              'my tickets',
+              style: TextStyle(color: Colors.amber.shade800),
+            )
+          ],
+        ),
+      ),
+      body: _allTickets != null
+          ? ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: _allTickets!.length,
+              itemBuilder: (context, index) {
+                var item = _allTickets![index];
+                return getTicketListTile(item);
+              },
+            )
+          : const Center(child: CircularProgressIndicator()),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _fetchTickets();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(normalSnackBar("Refreshing..."));
+          },
+          child: const Icon(Icons.refresh)),
+    );
+  }
+
+  Widget getTicketListTile(Map<String, dynamic> item) {
+    var timestamp = DateTime.parse(item["created_at"]).toLocal();
+    debugPrint((timestamp.day).toString());
+    return Visibility(
+      visible: item["status"] != "Delivered",
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                Colors.white,
+                Colors.orange.shade100,
+              ]),
+              borderRadius: BorderRadius.circular(12)),
+          child: Column(
             children: [
-              const Text('eat.caias / '),
-              Text(
-                'my tickets',
-                style: TextStyle(color: Colors.amber.shade800),
+              ListTile(
+                title: Text(
+                  item["item_name"] + " (x${item["quantity"].toString()})",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: Text("from ${item["shop_name"]}"),
+                trailing: Text(
+                  "₹${item["total_price"].toString()}",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.timer_sharp),
+                title: Text('Status: ${item["status"]}'),
+                subtitle: Text(
+                    "${timestamp.day}/${timestamp.month}/${timestamp.year} at ${(timestamp.hour) % 12}:${timestamp.minute} "),
+                trailing: ElevatedButton(
+                    onPressed: () {},
+                    child: const Icon(Icons.refresh_outlined)),
               )
             ],
           ),
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _allTickets != null
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ListView.builder(
-                          itemCount: _allTickets!.length,
-                          itemBuilder: (context, index) {
-                            var item = _allTickets![index];
-                            return TicketMaterial(
-                                height: 140,
-                                leftChild: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ListTile(
-                                      title: Text(item["item_names"]),
-                                      subtitle:
-                                          Text("from ${item["shop_name"]}"),
-                                    ),
-                                    ListTile(title: statusTag(item["status"])),
-                                  ],
-                                ),
-                                rightChild: Container(
-                                  child: IconButton(
-                                    icon: const Icon(Icons.refresh),
-                                    onPressed: () {},
-                                  ),
-                                ),
-                                radiusBorder: 14,
-                                tapHandler: () {},
-                                colorBackground: Colors.white);
-                          }),
-                    ),
-                  )
-                : const Center(child: CircularProgressIndicator()),
-          ],
-        ));
-  }
-
-  Widget statusTag(String status) {
-    switch (status) {
-      case "Pending":
-        return Container(
-          height: 20,
-          decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Colors.amber.shade600),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6.0),
-            child: Text("PENDING",
-                style: TextStyle(
-                  color: Colors.amber.shade600,
-                )),
-          ),
-        );
-
-      case "Ready to Collect":
-        return Container(
-          height: 14,
-          decoration: const BoxDecoration(
-              // border: Border.all(width: 2, color: Colors.amber.shade600)
-              gradient: LinearGradient(colors: [
-            Colors.green,
-            Color.fromARGB(255, 5, 248, 187),
-          ])),
-          child: const Text("READY",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              )),
-        );
-
-      default:
-        return Container();
-    }
+      ),
+    );
   }
 }

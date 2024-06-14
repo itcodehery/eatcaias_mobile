@@ -3,7 +3,6 @@ import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 

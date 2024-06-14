@@ -1,5 +1,9 @@
+import 'package:Eat.Caias/constants.dart';
+import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
 import 'package:Eat.Caias/pages/studteach/payments/payment_method_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ShopSelectionPage extends StatefulWidget {
   const ShopSelectionPage({Key? key, required this.shopNameList})
@@ -11,8 +15,78 @@ class ShopSelectionPage extends StatefulWidget {
 }
 
 class _ShopSelectionPageState extends State<ShopSelectionPage> {
+  String? username;
   Future<void> addToTicketDatabase() async {
-    return;
+    final controller = Get.find<CartController>();
+    try {
+      for (var item in controller.cartItems) {
+        await supabase.from('ticket').insert({
+          'item_name': item.title,
+          'user_name': username!,
+          'quantity': item.quantity,
+          'total_price': item.price * item.quantity,
+          'shop_name': item.shopName,
+          'status': 'Pending',
+        });
+      }
+      Get.showSnackbar(normalGetSnackBar(
+          "Added Tickets", "Check Tickets to see order status!"));
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    } on PostgrestException catch (error) {
+      debugPrint("Its a PostgrestException");
+      Get.showSnackbar(GetSnackBar(
+        message: error.message,
+      ));
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    } catch (error) {
+      Get.showSnackbar(GetSnackBar(
+        message: error.toString(),
+      ));
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _fetchUsername() async {
+    try {
+      final user = supabase.auth.currentUser!;
+      final response = await supabase
+          .from('studteach_user')
+          .select()
+          .eq('email', user.email!)
+          .single();
+
+      if (response.isNotEmpty) {
+        setState(() {
+          username = (response['username'] ?? " ") as String;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Username is null')));
+      }
+    } on PostgrestException catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: const Text('Unexpected error occurred'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    _fetchUsername();
+    super.initState();
   }
 
   @override
@@ -50,14 +124,7 @@ class _ShopSelectionPageState extends State<ShopSelectionPage> {
                   ],
                 ),
                 onTap: () {
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => PaymentMethodPage(
-                  //       shopName: widget.shopNameList.keys.elementAt(index),
-                  //       totalPrice: widget.shopNameList.values.elementAt(index),
-                  //     ),
-                  //   ),
-                  // );
+                  addToTicketDatabase();
                 },
               ),
             ),

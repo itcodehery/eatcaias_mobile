@@ -1,4 +1,5 @@
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,12 @@ const primaryColor = Colors.amber;
 const secondaryColor = Colors.brown;
 
 final tertiaryColor = Colors.amber.shade700;
+
+enum OrderStatus {
+  pending,
+  cancelled,
+  delivered,
+}
 
 var brownTextStyle = TextStyle(
   color: Colors.brown.shade700,
@@ -95,6 +102,18 @@ SnackBar normalSnackBar(String message) {
           style: brownTextStyle,
         ),
       ],
+    ),
+  );
+}
+
+GetSnackBar normalGetSnackBar(String title, String message) {
+  return GetSnackBar(
+    backgroundColor: Colors.amber.shade600,
+    duration: const Duration(seconds: 2),
+    titleText: Text(title, style: brownTextStyle.copyWith(fontSize: 18)),
+    messageText: Text(
+      message,
+      style: brownTextStyle,
     ),
   );
 }
