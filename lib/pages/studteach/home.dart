@@ -94,6 +94,7 @@ class HomeState extends State<Home> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
@@ -210,17 +211,15 @@ class HomeState extends State<Home> {
                       },
                     ),
                   ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.8,
-              child: Padding(
-                padding: cardPadding,
-                child: ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _listOfShops.length,
-                  itemBuilder: (context, index) {
-                    return getCustomListTile(index);
-                  },
-                ),
+            Padding(
+              padding: cardPadding,
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _listOfShops.length,
+                itemBuilder: (context, index) {
+                  return getCustomListTile(index);
+                },
               ),
             )
           ],

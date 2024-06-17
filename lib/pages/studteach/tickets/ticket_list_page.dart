@@ -12,6 +12,7 @@ class TicketListPage extends StatefulWidget {
 class _TicketListPageState extends State<TicketListPage> {
   String? username;
   List<Map<String, dynamic>>? _allTickets;
+  int pendingOrders = 0;
   Future<void> _fetchTickets() async {
     try {
       debugPrint("inside fetchTickets");
@@ -22,6 +23,10 @@ class _TicketListPageState extends State<TicketListPage> {
         debugPrint("data is not empty");
         setState(() {
           _allTickets = data;
+          pendingOrders = data
+              .where((element) => (element["status"] as String) == "Pending")
+              .toList()
+              .length;
         });
       }
     } on PostgrestException catch (error) {
