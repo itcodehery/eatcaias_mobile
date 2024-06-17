@@ -220,6 +220,7 @@ class _SearchPageState extends State<SearchPage> {
             ],
           ),
           onTap: () {
+            Get.lazyPut(() => CartController());
             var itemCount = 0;
             showDialog(
                 context: context,
@@ -243,27 +244,7 @@ class _SearchPageState extends State<SearchPage> {
                                   padding: MaterialStatePropertyAll(
                                       EdgeInsets.zero)),
                             ),
-                            _shopItems[index]["image_url"] != null
-                                ? Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 10,
-                                      bottom: 10,
-                                    ),
-                                    child: Container(
-                                      height: 140,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(_shopItems[index]
-                                              ["image_url"] as String),
-                                          fit: BoxFit.cover,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox(),
-                            // const SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Text(_shopItems[index]["item_name"]! as String,
                                 style: const TextStyle(
                                   fontSize: 24,
@@ -325,7 +306,6 @@ class _SearchPageState extends State<SearchPage> {
                               ],
                             ),
                             const Divider(),
-
                             TextButton(
                               style: ButtonStyle(
                                   backgroundColor: MaterialStatePropertyAll(

@@ -17,11 +17,17 @@ enum OrderStatus {
   pending,
   cancelled,
   delivered,
+  readyforpickup,
 }
 
 var brownTextStyle = TextStyle(
   color: Colors.brown.shade700,
 );
+
+var elevatedButtonStyle = ButtonStyle(
+    elevation: const MaterialStatePropertyAll(0),
+    backgroundColor: const MaterialStatePropertyAll(Colors.transparent),
+    foregroundColor: MaterialStatePropertyAll(Colors.brown.shade800));
 
 SnackBar achievementSnackbar(
     String achievementName, String achievementDescription) {
@@ -110,7 +116,9 @@ GetSnackBar normalGetSnackBar(String title, String message) {
   return GetSnackBar(
     backgroundColor: Colors.amber.shade600,
     duration: const Duration(seconds: 2),
-    titleText: Text(title, style: brownTextStyle.copyWith(fontSize: 18)),
+    titleText: Text(title,
+        style:
+            brownTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600)),
     messageText: Text(
       message,
       style: brownTextStyle,

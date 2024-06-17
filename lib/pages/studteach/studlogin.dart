@@ -213,15 +213,21 @@ class _StudloginState extends State<Studlogin> {
                         password: passwordController.text)
                     .then((value) => Get.showSnackbar(GetSnackBar(
                           margin: const EdgeInsets.all(8.0),
+                          duration: const Duration(seconds: 4),
                           backgroundColor: Colors.amber,
-                          message:
-                              "Welcome, ${emailController.text}! What would you like today?",
-                          title: "Logged in successfully!",
+                          messageText: Text(
+                            "Welcome, ${emailController.text}! What would you like today?",
+                            style: TextStyle(
+                              color: Colors.brown.shade600,
+                            ),
+                          ),
+                          titleText: Text(
+                            "Logged in successfully!",
+                            style: TextStyle(
+                              color: Colors.brown.shade600,
+                            ),
+                          ),
                         )));
-                // .then((value) => ScaffoldMessenger.of(context).showSnackBar(
-                //     SnackBar(
-                //         content:
-                //             Text('Logged in as ${emailController.text}'))));
               } on AuthException catch (e) {
                 setState(() {
                   errorMessage = e.message;

@@ -1,6 +1,6 @@
 import 'package:Eat.Caias/constants.dart';
 import 'package:Eat.Caias/pages/vendor/my_store.dart';
-import 'package:Eat.Caias/pages/vendor/orders_page.dart';
+import 'package:Eat.Caias/pages/vendor/orders/orders_page.dart';
 import 'package:Eat.Caias/pages/vendor/vendor_home.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

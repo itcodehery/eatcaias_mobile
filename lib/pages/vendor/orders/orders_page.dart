@@ -1,4 +1,5 @@
 import 'package:Eat.Caias/constants.dart';
+import 'package:Eat.Caias/pages/vendor/orders/edit_order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -60,8 +61,10 @@ class _OrdersPageState extends State<OrdersPage> {
 
   @override
   void initState() {
-    _fetchDetails();
-    _fetchShopOrders();
+    _fetchDetails().then((value) => _fetchShopOrders());
+    setState(() {
+      pendingOrderCount = _allShopOrders.length;
+    });
     super.initState();
   }
 
@@ -157,12 +160,12 @@ class _OrdersPageState extends State<OrdersPage> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.showSnackbar(normalGetSnackBar(
-                "Refreshing...", "Get ready to recieve orders!"));
             setState(() {
               pendingOrderCount = 0;
             });
-            _fetchShopOrders();
+            _fetchShopOrders().then((value) => Get.showSnackbar(
+                normalGetSnackBar(
+                    "Refreshing...", "Get ready to recieve orders!")));
           },
           child: const Icon(Icons.refresh_outlined)),
     );
@@ -206,7 +209,16 @@ class _OrdersPageState extends State<OrdersPage> {
                 subtitle: Text(
                     "by ${item["user_name"]} on ${timestamp.day}/${timestamp.month}/${timestamp.year} at ${(timestamp.hour) % 12}:${timestamp.minute} "),
                 trailing: ElevatedButton(
-                    onPressed: () {},
+                    style: elevatedButtonStyle,
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(
+                              builder: (context) => EditOrderPage(item: item),
+                            ),
+                          )
+                          .then((value) => _fetchShopOrders());
+                    },
                     child: const Icon(Icons.edit_note_rounded)),
               )
             ],

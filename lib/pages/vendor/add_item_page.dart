@@ -25,6 +25,7 @@ class _AddItemPageState extends State<AddItemPage> {
   //variables
   IsVegEnum _default = IsVegEnum.veg;
   IsInStock _inStock = IsInStock.inStock;
+  bool isAILoading = false;
 
   //keys
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -118,19 +119,59 @@ class _AddItemPageState extends State<AddItemPage> {
                           },
                         ),
                         const SizedBox(height: 10),
-                        TextFormField(
-                          controller: itemDescriptionController,
-                          decoration: const InputDecoration(
-                            labelText: 'Item Description',
-                            hintText: 'Enter item description',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null) {
-                              return "Please enter item description";
-                            }
-                            return null;
-                          },
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: itemDescriptionController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Item Description',
+                                  hintText: 'Enter item description',
+                                  border: OutlineInputBorder(),
+                                ),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Please enter item description";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                                onPressed: () {
+                                  if (itemNameController.text.isEmpty) {
+                                    Get.showSnackbar(normalGetSnackBar(
+                                        "Oops.", "The item name is empty..."));
+                                  } else {
+                                    Get.showSnackbar(normalGetSnackBar(
+                                        "AI.caias at Work",
+                                        "Generating a suitable description..."));
+                                    setState(() {
+                                      isAILoading = true;
+                                    });
+                                    Future.delayed(const Duration(seconds: 5),
+                                        () {
+                                      setState(() {
+                                        isAILoading = false;
+                                      });
+                                    });
+                                  }
+                                },
+                                child: isAILoading
+                                    ? const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      )
+                                    : const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                              Icons.generating_tokens_outlined),
+                                          SizedBox(width: 6),
+                                          Text("AI")
+                                        ],
+                                      ))
+                          ],
                         ),
                         const SizedBox(height: 10),
                         TextFormField(

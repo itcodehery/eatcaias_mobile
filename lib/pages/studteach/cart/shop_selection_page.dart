@@ -94,6 +94,19 @@ class _ShopSelectionPageState extends State<ShopSelectionPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Shop to Pay'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: ListTile(
+            title: const Text(
+                "A strict no return or cancellation policy is implemented in all canteens.",
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+                overflow: TextOverflow.fade),
+            trailing: ElevatedButton(
+                onPressed: () {}, child: const Text("Know More")),
+          ),
+        ),
       ),
       body: ListView.builder(
         itemCount: widget.shopNameList.length,
