@@ -35,7 +35,8 @@ class _VendorLoginState extends State<VendorLogin> {
     _auth = supabase.auth.onAuthStateChange.listen((event) {
       final session = event.session;
       if (session != null) {
-        Navigator.of(context).pushReplacementNamed("/vendor_tree");
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacementNamed("/vwidget_tree");
       }
     });
   }
@@ -53,6 +54,7 @@ class _VendorLoginState extends State<VendorLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

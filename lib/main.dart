@@ -1,8 +1,19 @@
-import 'package:Eat.Caias/pages/profile_page.dart';
+import 'package:Eat.Caias/pages/common/four_o_four.dart';
+import 'package:Eat.Caias/pages/common/splash_page.dart';
+import 'package:Eat.Caias/pages/studteach/achievements_page.dart';
+import 'package:Eat.Caias/pages/studteach/payments/payment_method_page.dart';
+import 'package:Eat.Caias/pages/studteach/search_page.dart';
+import 'package:get/get.dart';
+import 'package:Eat.Caias/pages/common/settings_page.dart';
+import 'package:Eat.Caias/pages/common/profile_page.dart';
+import 'package:Eat.Caias/pages/studteach/cart/cart_page.dart';
 import 'package:Eat.Caias/pages/studteach/home.dart';
 import 'package:Eat.Caias/pages/studteach/studlogin.dart';
-import 'package:Eat.Caias/pages/usertype_page.dart';
-import 'package:Eat.Caias/pages/widget_tree.dart';
+import 'package:Eat.Caias/pages/common/usertype_page.dart';
+import 'package:Eat.Caias/pages/vendor/add_item_page.dart';
+import 'package:Eat.Caias/pages/vendor/v_widget_tree.dart';
+import 'package:Eat.Caias/pages/vendor/vendor_login.dart';
+import 'package:Eat.Caias/pages/studteach/widget_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -22,26 +33,37 @@ Future<void> main() async {
   runApp(const EatCAIAS());
 }
 
-final supabase = Supabase.instance.client;
-
 class EatCAIAS extends StatelessWidget {
   const EatCAIAS({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Eat.CAIAS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
           useMaterial3: true,
           fontFamily: 'Outfit'),
-      home: const UsertypePage(),
+      home: const SplashPage(),
       routes: {
         "/home": (context) => const Home(),
-        "loginas": (context) => const UsertypePage(),
+        "/splash": (context) => const SplashPage(),
+        "/loginas": (context) => const UsertypePage(),
+        "/search": (context) => const SearchPage(),
+        "/vendorlogin": (context) => const VendorLogin(),
         "/login": (context) => const Studlogin(),
         "/widget_tree": (context) => const WidgetTree(),
+        "/vwidget_tree": (context) => const VWidgetTree(),
         "/profile": (context) => const ProfilePage(),
+        "/settings": (context) => const SettingsPage(),
+        "/cart": (context) => const CartPage(),
+        "/404": (context) => const FourOFour(),
+        "/achievements": (context) => const AchievementsPage(),
+      },
+      onUnknownRoute: (settings) {
+        Navigator.of(context).pushReplacementNamed("/404");
+        return null;
       },
     );
   }

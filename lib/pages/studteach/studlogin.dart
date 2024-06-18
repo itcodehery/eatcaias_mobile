@@ -1,10 +1,15 @@
+import 'dart:async';
+
+import 'package:Eat.Caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:get/get.dart';
 import 'package:password_strength/password_strength.dart';
+import 'package:profanity_filter/profanity_filter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-enum AuthState { login, signIn }
+enum AuthType { login, signIn }
 
 class Studlogin extends StatefulWidget {
   const Studlogin({Key? key}) : super(key: key);
@@ -17,18 +22,40 @@ class _StudloginState extends State<Studlogin> {
   //authmode
   String errorMessage = '';
   bool isLogin = true;
-  AuthState authMode = AuthState.login;
+  bool isObscured = true;
+  AuthType authMode = AuthType.login;
+  late final StreamSubscription<AuthState> _auth;
 
   //controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final fullNameController = TextEditingController();
 
-  //supabase
-  final supabase = Supabase.instance.client;
-
   //keys
   final _formKey = GlobalKey<FormState>();
+
+  //initstate
+  @override
+  void initState() {
+    super.initState();
+    _auth = supabase.auth.onAuthStateChange.listen((event) {
+      final session = event.session;
+      if (session != null) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacementNamed("/widget_tree");
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    fullNameController.dispose();
+    _auth.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,13 +95,12 @@ class _StudloginState extends State<Studlogin> {
                     )),
                     foregroundColor: MaterialStatePropertyAll(
                         Theme.of(context).colorScheme.primary)),
-                segments: const <ButtonSegment<AuthState>>[
-                  ButtonSegment(value: AuthState.login, label: Text('Login')),
-                  ButtonSegment(
-                      value: AuthState.signIn, label: Text('Sign Up')),
+                segments: const <ButtonSegment<AuthType>>[
+                  ButtonSegment(value: AuthType.login, label: Text('Login')),
+                  ButtonSegment(value: AuthType.signIn, label: Text('Sign Up')),
                 ],
-                selected: <AuthState>{authMode},
-                onSelectionChanged: (Set<AuthState> newSelection) {
+                selected: <AuthType>{authMode},
+                onSelectionChanged: (Set<AuthType> newSelection) {
                   setState(() {
                     authMode = newSelection.first;
                     isLogin = !isLogin;
@@ -88,7 +114,9 @@ class _StudloginState extends State<Studlogin> {
                   children: [
                     TextFormField(
                       decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
                           label: Text('Your CAIAS Email')),
                       controller: emailController,
                       validator: (value) {
@@ -100,21 +128,40 @@ class _StudloginState extends State<Studlogin> {
                       },
                     ),
                     const SizedBox(height: 10),
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Password')),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "The field is required!";
-                        }
-                        if (estimatePasswordStrength(value) < 0.3) {
-                          return 'Password is too weak';
-                        }
-                        return null;
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: passwordController,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12)),
+                                ),
+                                label: Text('Password')),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "The field is required!";
+                              }
+                              if (estimatePasswordStrength(value) < 0.3) {
+                                return 'Password is too weak';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscured = !isObscured;
+                              });
+                            },
+                            icon: isObscured
+                                ? const Icon(Icons.hide_source)
+                                : const Icon(Icons.password)),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     Visibility(
@@ -123,7 +170,10 @@ class _StudloginState extends State<Studlogin> {
                           children: [
                             TextFormField(
                               decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                  ),
                                   label: Text('Full Name')),
                               controller: fullNameController,
                               inputFormatters: [
@@ -133,34 +183,20 @@ class _StudloginState extends State<Studlogin> {
                                     replacementString: "-")
                               ],
                               validator: (value) {
+                                var filter = ProfanityFilter();
+                                if (filter.hasProfanity(value!)) {
+                                  return "The username contains profanity!";
+                                }
+                                if (value.isEmpty && !isLogin) {
+                                  return "The field is required!";
+                                }
+
                                 return null;
                               },
                             ),
                             const SizedBox(height: 10),
                           ],
                         )),
-                    // ElevatedButton(
-                    //     style: ButtonStyle(
-                    //         backgroundColor:
-                    //             MaterialStatePropertyAll(Colors.amber.shade200),
-                    //         shape:
-                    //             MaterialStatePropertyAll(RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(6),
-                    //         ))),
-                    //     onPressed: () {
-                    //       if (_formKey.currentState!.validate()) {
-                    //         Navigator.of(context).pushReplacementNamed("/home");
-                    //       }
-                    //     },
-                    //     child: Row(
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       mainAxisAlignment: MainAxisAlignment.center,
-                    //       children: [
-                    //         const Icon(Icons.login),
-                    //         const SizedBox(width: 10),
-                    //         Text(isLogin ? 'Login' : "Sign Up")
-                    //       ],
-                    //     ))
                   ],
                 ),
               )
@@ -170,14 +206,49 @@ class _StudloginState extends State<Studlogin> {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             if (isLogin) {
-              final response = await supabase.auth.signInWithPassword(
-                  email: emailController.text,
-                  password: passwordController.text);
+              try {
+                await supabase.auth
+                    .signInWithPassword(
+                        email: emailController.text,
+                        password: passwordController.text)
+                    .then((value) => Get.showSnackbar(GetSnackBar(
+                          margin: const EdgeInsets.all(8.0),
+                          duration: const Duration(seconds: 4),
+                          backgroundColor: Colors.amber,
+                          messageText: Text(
+                            "Welcome, ${emailController.text}! What would you like today?",
+                            style: TextStyle(
+                              color: Colors.brown.shade600,
+                            ),
+                          ),
+                          titleText: Text(
+                            "Logged in successfully!",
+                            style: TextStyle(
+                              color: Colors.brown.shade600,
+                            ),
+                          ),
+                        )));
+              } on AuthException catch (e) {
+                setState(() {
+                  errorMessage = e.message;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        '$errorMessage | Please retry by restarting the app')));
+              }
             } else {
-              final response = await supabase.auth.signUp(
+              await supabase.auth.signUp(
                   email: emailController.text,
                   password: passwordController.text,
-                  data: {"username": fullNameController.text});
+                  data: {
+                    "username": fullNameController.text
+                  }).then((value) => Get.showSnackbar(GetSnackBar(
+                    margin: const EdgeInsets.all(8.0),
+                    backgroundColor: Colors.amber,
+                    message:
+                        "Welcome, ${fullNameController.text}! What would you like today?",
+                    title: "Logged in successfully!",
+                  )));
             }
           }
         },

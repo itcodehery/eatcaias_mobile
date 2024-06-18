@@ -1,3 +1,4 @@
+import 'package:Eat.Caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,9 +11,7 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   final supabase = Supabase.instance.client;
-<<<<<<< Updated upstream
-=======
-  String username = "Not available";
+  String? username;
 
   @override
   void initState() {
@@ -22,23 +21,20 @@ class ProfilePageState extends State<ProfilePage> {
 
   Future<void> _fetchUsername() async {
     try {
-      final user = supabase.auth.currentUser;
-      if (user != null) {
-        final userId = user.id;
-        final response = await supabase
-            .from('studteach_user')
-            .select('username')
-            .eq('id', userId)
-            .single();
+      final user = supabase.auth.currentUser!;
+      final response = await supabase
+          .from('studteach_user')
+          .select()
+          .eq('email', user.email!)
+          .single();
 
-        if (response.isNotEmpty) {
-          setState(() {
-            username = (response['username'] ?? " ") as String;
-          });
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Username is null')));
-        }
+      if (response.isNotEmpty) {
+        setState(() {
+          username = (response['username'] ?? " ") as String;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Username is null')));
       }
     } on PostgrestException catch (error) {
       if (mounted) {
@@ -57,7 +53,6 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
->>>>>>> Stashed changes
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,15 +70,40 @@ class ProfilePageState extends State<ProfilePage> {
       body: Center(
         child: Column(
           children: [
-            const ListTile(
-              title: Text("Hari"),
+            ListTile(
+              title: const Text("Logged in as"),
+              subtitle: Text(supabase.auth.currentUser!.email!),
+              trailing: Icon(Icons.verified, color: Colors.brown.shade700),
             ),
-            const SizedBox(height: 10),
-<<<<<<< Updated upstream
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Log Out'),
-=======
+            ListTile(
+              onLongPress: () {
+                ScaffoldMessenger.of(context).showSnackBar(achievementSnackbar(
+                    "Self-Obsessed",
+                    "Long Press on your name for some reason"));
+              },
+              onTap: () {},
+              title: const Text('Username'),
+              subtitle: username != null
+                  ? Text(username!)
+                  : const LinearProgressIndicator(),
+            ),
+            ListTile(
+              title: const Text("Joined eat.caias on"),
+              subtitle:
+                  Text(supabase.auth.currentUser!.createdAt.split("T")[0]),
+            ),
+            ListTile(
+              title: const Text("Authentication State"),
+              subtitle: Text(supabase.auth.currentUser!.aud),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.celebration_outlined),
+              title: const Text('Achievements'),
+              onTap: () {
+                Navigator.of(context).pushNamed("/achievements");
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.logout),
               onTap: () {
@@ -127,6 +147,8 @@ class ProfilePageState extends State<ProfilePage> {
                                           .showSnackBar(const SnackBar(
                                               content: Text(
                                                   'Logged out successfully!')));
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
                                       Navigator.of(context)
                                           .pushReplacementNamed('/');
                                     },
@@ -152,8 +174,19 @@ class ProfilePageState extends State<ProfilePage> {
               title: const Text(
                 'Settings',
               ),
->>>>>>> Stashed changes
             ),
+            ListTile(
+              leading: const Icon(Icons.not_interested_sharp),
+              onTap: () {
+                Navigator.of(context).pushNamed('/404');
+              },
+              title: const Text(
+                '404',
+              ),
+            ),
+            const Spacer(),
+            const Text("Made by Hari Prasad"),
+            const SizedBox(height: 20),
           ],
         ),
       ),
