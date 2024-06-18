@@ -3,6 +3,7 @@ import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -164,7 +165,7 @@ class HomeState extends State<Home> {
             _listOfShops.isEmpty
                 ? Padding(
                     padding: cardPadding,
-                    child: const LinearProgressIndicator(),
+                    child: Container(),
                   )
                 : ListTile(
                     title: const Text('Browse through Canteens'),
@@ -211,17 +212,36 @@ class HomeState extends State<Home> {
                       },
                     ),
                   ),
-            Padding(
-              padding: cardPadding,
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _listOfShops.length,
-                itemBuilder: (context, index) {
-                  return getCustomListTile(index);
-                },
-              ),
-            )
+            _listOfShops.isNotEmpty
+                ? Padding(
+                    padding: cardPadding,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _listOfShops.length,
+                      itemBuilder: (context, index) {
+                        return getCustomListTile(index);
+                      },
+                    ),
+                  )
+                : Padding(
+                    padding: cardPadding,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: 7,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: cardPadding,
+                            child: Shimmer(
+                              duration: const Duration(seconds: 2),
+                              color: Colors.amber.shade500,
+                              child: const ListTile(
+                                  title: SizedBox(), subtitle: SizedBox()),
+                            ),
+                          );
+                        }),
+                  )
           ],
         ),
       ),

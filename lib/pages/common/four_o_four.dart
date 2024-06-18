@@ -9,14 +9,14 @@ class FourOFour extends StatelessWidget {
       appBar: AppBar(),
       body: Center(
           child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(1000)),
-            image: DecorationImage(
-                image: NetworkImage(
-                    "https://th.bing.com/th/id/OIG1.raljIHL0dUZF.hmZiJEp?w=1024&h=1024&rs=1&pid=ImgDetMain"),
-                fit: BoxFit.cover)),
+        width: 300,
+        height: 300,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(300),
+          image: const DecorationImage(
+              image: AssetImage('../assets/four-o-four.jpeg'),
+              fit: BoxFit.cover),
+        ),
       )),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:Eat.Caias/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class TicketListPage extends StatefulWidget {
   const TicketListPage({Key? key}) : super(key: key);
@@ -106,7 +107,7 @@ class _TicketListPageState extends State<TicketListPage> {
               ])),
               padding: const EdgeInsets.all(8),
               child: ListTile(
-                title: Text("${_allTickets?.length ?? 0} pending orders",
+                title: Text("${_allTickets?.length ?? 0} pending tickets",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -131,6 +132,7 @@ class _TicketListPageState extends State<TicketListPage> {
       ),
       body: _allTickets != null
           ? ListView.builder(
+              padding: const EdgeInsets.only(bottom: 60),
               physics: const BouncingScrollPhysics(),
               itemCount: _allTickets!.length,
               itemBuilder: (context, index) {
@@ -138,7 +140,21 @@ class _TicketListPageState extends State<TicketListPage> {
                 return getTicketListTile(item);
               },
             )
-          : const Center(child: CircularProgressIndicator()),
+          : ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: cardPadding,
+                  child: Shimmer(
+                    duration: const Duration(seconds: 2),
+                    color: Colors.amber.shade500,
+                    child:
+                        const ListTile(title: SizedBox(), subtitle: SizedBox()),
+                  ),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             _fetchTickets();
@@ -202,26 +218,11 @@ class _TicketListPageState extends State<TicketListPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         const SizedBox(height: 10),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text(
-                                              "Ticket Details",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  _fetchTickets().then(
-                                                      (value) =>
-                                                          Navigator.of(context)
-                                                              .pop());
-                                                },
-                                                child: const Text(
-                                                    "Refresh Status"))
-                                          ],
+                                        const Text(
+                                          "Ticket Details",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         const SizedBox(height: 10),
                                         const Divider(),
@@ -234,19 +235,6 @@ class _TicketListPageState extends State<TicketListPage> {
                                         Text("Status: ${item["status"]}"),
                                         Text(
                                             "Ordered on: ${timestamp.day}/${timestamp.month}/${timestamp.year} at ${(timestamp.hour) % 12}:${timestamp.minute} "),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child:
-                                                    const Text("Cancel Order")),
-                                          ],
-                                        ),
                                         const SizedBox(height: 10),
                                       ],
                                     ),

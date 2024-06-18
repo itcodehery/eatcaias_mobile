@@ -19,6 +19,8 @@ class _SearchPageState extends State<SearchPage> {
   List<Map<String, dynamic>> _shopItems = [];
   List<Map<String, dynamic>> _shopList = [];
   String _input = '';
+  String noFood = "";
+  String noCanteen = "";
   bool isFoodQuery = true;
   SearchType _selectedSearchType = SearchType.food;
   final TextEditingController _searchController = TextEditingController();
@@ -34,10 +36,12 @@ class _SearchPageState extends State<SearchPage> {
       if (shopItems.isNotEmpty) {
         setState(() {
           _shopItems = shopItems;
+          noFood = "";
         });
       } else {
         setState(() {
           _shopItems = [];
+          noFood = "No food for $itemName";
         });
       }
     } on PostgrestException catch (error) {
@@ -67,10 +71,12 @@ class _SearchPageState extends State<SearchPage> {
       if (canteenShops.isNotEmpty) {
         setState(() {
           _shopList = canteenShops;
+          noCanteen = "";
         });
       } else {
         setState(() {
           _shopList = [];
+          noCanteen = "No canteens for $shopName";
         });
       }
     } on PostgrestException catch (error) {
@@ -169,7 +175,7 @@ class _SearchPageState extends State<SearchPage> {
                   : Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Text(
-                        "No food for '$_input'",
+                        noFood,
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 22,
@@ -188,7 +194,7 @@ class _SearchPageState extends State<SearchPage> {
                   : Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: Text(
-                        "No canteens for '$_input'",
+                        noCanteen,
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 22,

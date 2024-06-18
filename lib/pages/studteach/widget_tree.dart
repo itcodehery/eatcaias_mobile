@@ -30,18 +30,15 @@ class _WidgetTreeState extends State<WidgetTree> {
           selectedIndex: _currentIndex,
           destinations: const [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_filled),
               label: "Home",
             ),
             NavigationDestination(
-              selectedIcon: FaIcon(FontAwesomeIcons.ticket),
               icon: FaIcon(FontAwesomeIcons.ticket),
               label: "Tickets",
             ),
             NavigationDestination(
-              icon: Icon(Icons.leaderboard_outlined),
-              selectedIcon: Icon(Icons.leaderboard_rounded),
+              icon: Icon(Icons.leaderboard),
               label: "Leaderboards",
             ),
           ]),

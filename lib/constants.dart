@@ -20,6 +20,8 @@ enum OrderStatus {
   readyforpickup,
 }
 
+enum FilterMenuItem { atoz, ztoa, vegOnly, nonVegOnly, inStock, outOfStock }
+
 var brownTextStyle = TextStyle(
   color: Colors.brown.shade700,
 );
@@ -212,8 +214,8 @@ Widget isVegTag(bool isVeg) {
   );
 }
 
-ListTile vendorListTile(
-    Map<String, dynamic> shopDetails, Map<String, dynamic> vendorUserDetails) {
+ListTile vendorListTile(Map<String, dynamic> shopDetails,
+    Map<String, dynamic> vendorUserDetails, String manageType) {
   return ListTile(
     tileColor: Colors.amber,
     title: Text(shopDetails["shop_name"] ?? "",
@@ -223,7 +225,7 @@ ListTile vendorListTile(
           color: brownTextStyle.color,
         )),
     subtitle: shopDetails.isNotEmpty
-        ? Text("Manage your store, ${vendorUserDetails["vendorname"]}!")
+        ? Text("Manage your $manageType, ${vendorUserDetails["vendorname"]}!")
         : null,
   );
 }

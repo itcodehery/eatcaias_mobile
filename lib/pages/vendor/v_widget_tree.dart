@@ -91,12 +91,10 @@ class _VWidgetTreeState extends State<VWidgetTree> {
           selectedIndex: currentIndex,
           destinations: const [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_filled),
               label: "Home",
             ),
             NavigationDestination(
-              selectedIcon: FaIcon(FontAwesomeIcons.ticket),
               icon: FaIcon(FontAwesomeIcons.ticket),
               label: "Orders",
             ),

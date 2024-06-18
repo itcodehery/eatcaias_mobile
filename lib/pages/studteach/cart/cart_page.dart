@@ -124,8 +124,26 @@ class _CartPageState extends State<CartPage> {
                       );
                     },
                   )
-                : const Center(
-                    child: Text('No items in cart! Add some items!'));
+                : Center(
+                    child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "../assets/cart-empty.png",
+                        fit: BoxFit.contain,
+                        width: 250,
+                        height: 250,
+                      ),
+                      const Text(
+                        'Your cart is empty!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ));
           }),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {

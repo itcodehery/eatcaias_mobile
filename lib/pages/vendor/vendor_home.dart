@@ -3,6 +3,7 @@ import 'package:Eat.Caias/pages/vendor/add_item_page.dart';
 import 'package:Eat.Caias/pages/vendor/edit_item_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class VendorHome extends StatefulWidget {
@@ -122,7 +123,7 @@ class _VendorHomeState extends State<VendorHome> {
             ],
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(72),
-              child: vendorListTile(_shopDetails, _vendorUserDetails),
+              child: vendorListTile(_shopDetails, _vendorUserDetails, "store"),
             )),
         body: Column(
           children: [
@@ -155,6 +156,7 @@ class _VendorHomeState extends State<VendorHome> {
               child: _shopItems.isNotEmpty
                   ? ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 60),
                       shrinkWrap: true,
                       itemCount: _shopItems.length,
                       itemBuilder: (context, index) {
@@ -193,12 +195,21 @@ class _VendorHomeState extends State<VendorHome> {
                         );
                       },
                     )
-                  : const Center(child: CircularProgressIndicator()),
+                  : ListView.builder(
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: cardPadding,
+                          child: Shimmer(
+                            color: Colors.amber.shade600,
+                            child: const ListTile(
+                              title: SizedBox(),
+                              subtitle: SizedBox(),
+                            ),
+                          ),
+                        );
+                      }),
             ),
-            TextButton(
-              child: const Text('Go to 404'),
-              onPressed: () => Navigator.of(context).pushNamed("/404"),
-            )
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(

@@ -23,6 +23,7 @@ dependencies:
   flutter_styled_toast: ^2.2.1
   gettext: ^1.2.0
   get: ^4.6.6
+  shimmer_animation: ^2.1.0+1
   
 
 dev_dependencies:

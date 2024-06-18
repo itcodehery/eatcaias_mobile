@@ -102,7 +102,7 @@ class _MyStoreState extends State<MyStore> {
       ),
       body: Column(
         children: [
-          vendorListTile(_shopDetails, _vendorUserDetails),
+          vendorListTile(_shopDetails, _vendorUserDetails, "inventory"),
           const SizedBox(height: 10),
           const ListTile(
             title: Text('Manage Inventory'),

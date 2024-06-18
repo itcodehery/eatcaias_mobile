@@ -164,40 +164,52 @@ class _EditOrderPageState extends State<EditOrderPage> {
               builder: (con) => Dialog(
                     child: Padding(
                       padding: dialogPadding,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Save Changes'),
-                          const Text("Are you sure you want to save changes?"),
-                          Row(
-                            children: [
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel')),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    _updateShopOrder(switch (_selectedStatus) {
-                                      OrderStatus.delivered => "Delivered",
-                                      OrderStatus.pending => "Pending",
-                                      OrderStatus.cancelled => "Cancelled",
-                                      OrderStatus.readyforpickup =>
-                                        "Ready For Pickup"
-                                    })
-                                        .then((value) {
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Save Changes',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const Text(
+                                "Are you sure you want to save changes?"),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                const Spacer(),
+                                ElevatedButton(
+                                    onPressed: () {
                                       Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                      Get.showSnackbar(normalGetSnackBar(
-                                          "Item Updated",
-                                          "${widget.item["item_name"]} has been updated"));
-                                    });
-                                  },
-                                  child: const Text('Save')),
-                            ],
-                          )
-                        ],
+                                    },
+                                    child: const Text('Cancel')),
+                                const SizedBox(width: 10),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      _updateShopOrder(
+                                              switch (_selectedStatus) {
+                                        OrderStatus.delivered => "Delivered",
+                                        OrderStatus.pending => "Pending",
+                                        OrderStatus.cancelled => "Cancelled",
+                                        OrderStatus.readyforpickup =>
+                                          "Ready For Pickup"
+                                      })
+                                          .then((value) {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        Get.showSnackbar(normalGetSnackBar(
+                                            "Item Updated",
+                                            "${widget.item["item_name"]} has been updated"));
+                                      });
+                                    },
+                                    child: const Text('Save')),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ));

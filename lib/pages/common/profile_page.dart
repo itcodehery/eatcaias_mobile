@@ -175,6 +175,15 @@ class ProfilePageState extends State<ProfilePage> {
                 'Settings',
               ),
             ),
+            ListTile(
+              leading: const Icon(Icons.not_interested_sharp),
+              onTap: () {
+                Navigator.of(context).pushNamed('/404');
+              },
+              title: const Text(
+                '404',
+              ),
+            ),
             const Spacer(),
             const Text("Made by Hari Prasad"),
             const SizedBox(height: 20),

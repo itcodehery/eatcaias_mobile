@@ -135,7 +135,7 @@ class _OrdersPageState extends State<OrdersPage> {
       ),
       body: Column(
         children: [
-          vendorListTile(_shopDetails, _vendorUserDetails),
+          vendorListTile(_shopDetails, _vendorUserDetails, "orders"),
           const SizedBox(height: 10),
           ListTile(
             title: const Text('Incoming Orders'),
@@ -146,6 +146,7 @@ class _OrdersPageState extends State<OrdersPage> {
             child: _shopItems.isNotEmpty
                 ? ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 80),
                     shrinkWrap: true,
                     itemCount: _allShopOrders.length,
                     itemBuilder: (context, index) {
