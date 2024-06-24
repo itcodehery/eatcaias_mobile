@@ -11,8 +11,8 @@ class _UsertypePageState extends State<UsertypePage> {
   @override
   Widget build(BuildContext context) {
     ButtonStyle defaultButton = ButtonStyle(
-      backgroundColor: const MaterialStatePropertyAll(Colors.amber),
-      shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+      backgroundColor: const WidgetStatePropertyAll(Colors.amber),
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       )),
     );

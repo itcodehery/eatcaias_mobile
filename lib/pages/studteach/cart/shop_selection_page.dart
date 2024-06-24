@@ -1,6 +1,6 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
-import 'package:Eat.Caias/pages/studteach/payments/payment_method_page.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/pages/studteach/cart/cart_controller.dart';
+import 'package:eat_caias/pages/studteach/payments/payment_method_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -24,28 +24,36 @@ class _ShopSelectionPageState extends State<ShopSelectionPage> {
           'item_name': item.title,
           'user_name': username!,
           'quantity': item.quantity,
-          'total_price': item.price * item.quantity,
+          'total_price': item.totalPrice,
           'shop_name': item.shopName,
           'status': 'Pending',
+        }).then((value) {
+          Get.showSnackbar(normalGetSnackBar(
+              "Added Tickets", "Check Tickets to see order status!"));
         });
       }
-      Get.showSnackbar(normalGetSnackBar(
-          "Added Tickets", "Check Tickets to see order status!"));
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+
+      if (mounted) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
     } on PostgrestException catch (error) {
       debugPrint("Its a PostgrestException");
       Get.showSnackbar(GetSnackBar(
         message: error.message,
       ));
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
     } catch (error) {
       Get.showSnackbar(GetSnackBar(
         message: error.toString(),
       ));
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
     }
   }
 
@@ -63,8 +71,10 @@ class _ShopSelectionPageState extends State<ShopSelectionPage> {
           username = (response['username'] ?? " ") as String;
         });
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Username is null')));
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Username is null')));
+        }
       }
     } on PostgrestException catch (error) {
       if (mounted) {
@@ -137,7 +147,11 @@ class _ShopSelectionPageState extends State<ShopSelectionPage> {
                   ],
                 ),
                 onTap: () {
-                  addToTicketDatabase();
+                  // addToTicketDatabase();
+                  Get.to(() => PaymentMethodPage(
+                        shopName: widget.shopNameList.keys.elementAt(index),
+                        totalPrice: widget.shopNameList.values.elementAt(index),
+                      ));
                 },
               ),
             ),

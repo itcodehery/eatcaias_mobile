@@ -1,4 +1,4 @@
-import 'package:Eat.Caias/constants.dart';
+import 'package:eat_caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -33,8 +33,10 @@ class ProfilePageState extends State<ProfilePage> {
           username = (response['username'] ?? " ") as String;
         });
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Username is null')));
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Username is null')));
+        }
       }
     } on PostgrestException catch (error) {
       if (mounted) {
@@ -129,7 +131,7 @@ class ProfilePageState extends State<ProfilePage> {
                                 children: [
                                   ElevatedButton(
                                     style: const ButtonStyle(
-                                      elevation: MaterialStatePropertyAll(0),
+                                      elevation: WidgetStatePropertyAll(0),
                                     ),
                                     onPressed: () {
                                       Navigator.of(context).pop();
@@ -139,7 +141,7 @@ class ProfilePageState extends State<ProfilePage> {
                                   const SizedBox(width: 10),
                                   ElevatedButton(
                                     style: const ButtonStyle(
-                                      elevation: MaterialStatePropertyAll(0),
+                                      elevation: WidgetStatePropertyAll(0),
                                     ),
                                     onPressed: () async {
                                       await supabase.auth.signOut();

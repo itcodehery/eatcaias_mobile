@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Eat.Caias/constants.dart';
+import 'package:eat_caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
@@ -90,10 +90,10 @@ class _StudloginState extends State<Studlogin> {
               SegmentedButton(
                 selectedIcon: const Icon(Icons.login),
                 style: ButtonStyle(
-                    side: MaterialStatePropertyAll(BorderSide(
+                    side: WidgetStatePropertyAll(BorderSide(
                       color: Theme.of(context).colorScheme.inversePrimary,
                     )),
-                    foregroundColor: MaterialStatePropertyAll(
+                    foregroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.primary)),
                 segments: const <ButtonSegment<AuthType>>[
                   ButtonSegment(value: AuthType.login, label: Text('Login')),
@@ -232,9 +232,11 @@ class _StudloginState extends State<Studlogin> {
                 setState(() {
                   errorMessage = e.message;
                 });
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                        '$errorMessage | Please retry by restarting the app')));
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                          '$errorMessage | Please retry by restarting the app')));
+                }
               }
             } else {
               await supabase.auth.signUp(

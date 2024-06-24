@@ -1,4 +1,4 @@
-import 'package:Eat.Caias/constants.dart';
+import 'package:eat_caias/constants.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Eat.Caias/constants.dart';
+import 'package:eat_caias/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -58,8 +58,10 @@ class _TicketListPageState extends State<TicketListPage> {
           username = (response['username'] ?? " ") as String;
         });
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Username is null')));
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Username is null')));
+        }
       }
     } on PostgrestException catch (error) {
       if (mounted) {

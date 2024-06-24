@@ -1,5 +1,5 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/helper/achievements_helper.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/helper/achievements_helper.dart';
 import 'package:flutter/material.dart';
 
 class AchievementsPage extends StatefulWidget {

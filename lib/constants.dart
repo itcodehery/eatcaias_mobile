@@ -27,9 +27,9 @@ var brownTextStyle = TextStyle(
 );
 
 var elevatedButtonStyle = ButtonStyle(
-    elevation: const MaterialStatePropertyAll(0),
-    backgroundColor: const MaterialStatePropertyAll(Colors.transparent),
-    foregroundColor: MaterialStatePropertyAll(Colors.brown.shade800));
+    elevation: const WidgetStatePropertyAll(0),
+    backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+    foregroundColor: WidgetStatePropertyAll(Colors.brown.shade800));
 
 SnackBar achievementSnackbar(
     String achievementName, String achievementDescription) {
@@ -148,10 +148,10 @@ EdgeInsets dialogPadding =
     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0);
 
 const mainButtonsStyle = ButtonStyle(
-  fixedSize: MaterialStatePropertyAll(Size(150, 50)),
-  minimumSize: MaterialStatePropertyAll(Size(120, 40)),
-  elevation: MaterialStatePropertyAll(0),
-  shape: MaterialStatePropertyAll(
+  fixedSize: WidgetStatePropertyAll(Size(150, 50)),
+  minimumSize: WidgetStatePropertyAll(Size(120, 40)),
+  elevation: WidgetStatePropertyAll(0),
+  shape: WidgetStatePropertyAll(
     RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
   ),
 );

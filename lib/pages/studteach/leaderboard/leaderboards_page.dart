@@ -1,5 +1,5 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/studteach/leaderboard/leaderboards_helper.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/pages/studteach/leaderboard/leaderboards_helper.dart';
 import 'package:flutter/material.dart';
 
 class LeaderboardsPage extends StatelessWidget {

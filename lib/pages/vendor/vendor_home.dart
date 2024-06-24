@@ -1,6 +1,6 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/vendor/add_item_page.dart';
-import 'package:Eat.Caias/pages/vendor/edit_item_page.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/pages/vendor/add_item_page.dart';
+import 'package:eat_caias/pages/vendor/edit_item_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -80,34 +80,6 @@ class _VendorHomeState extends State<VendorHome> {
     }
   }
 
-  //addItemToDatabase
-  Future<void> _addItemToDatabase() async {
-    try {
-      await supabase.from('menu_item').upsert([
-        {
-          'shop_name': _shopDetails["shop_name"],
-          'item_name': 'item_name',
-          'description': 'description',
-          'price': 'price',
-        }
-      ]);
-    } on PostgrestException catch (error) {
-      if (mounted) {
-        SnackBar(
-          content: Text(error.message),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        );
-      }
-    } catch (error) {
-      if (mounted) {
-        SnackBar(
-          content: const Text('Unexpected error occurred'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        );
-      }
-    }
-  }
-
   //main builder
   @override
   Widget build(BuildContext context) {
@@ -131,9 +103,9 @@ class _VendorHomeState extends State<VendorHome> {
               title: const Text('Store Items'),
               trailing: ElevatedButton.icon(
                   style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
+                      elevation: WidgetStateProperty.all(0),
                       backgroundColor:
-                          MaterialStatePropertyAll(Colors.amber.shade100)),
+                          WidgetStatePropertyAll(Colors.amber.shade100)),
                   onPressed: () {
                     _fetchDetails();
                     Get.showSnackbar(const GetSnackBar(

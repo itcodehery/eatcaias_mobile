@@ -1,4 +1,4 @@
-import 'package:Eat.Caias/models/cart_item.dart';
+import 'package:eat_caias/models/cart_item.dart';
 import 'package:get/get.dart';
 
 class CartController extends GetxController {
@@ -15,6 +15,19 @@ class CartController extends GetxController {
 
   void purgeCart() {
     cartItems.clear();
+  }
+
+  Map<String, int> get shopNamesAndPrices {
+    Map<String, int> shopNamesAndPrices = {};
+    for (var element in cartItems) {
+      if (shopNamesAndPrices.containsKey(element.shopName)) {
+        shopNamesAndPrices[element.shopName] =
+            shopNamesAndPrices[element.shopName]! + element.totalPrice;
+      } else {
+        shopNamesAndPrices[element.shopName] = element.totalPrice;
+      }
+    }
+    return shopNamesAndPrices;
   }
 
   int get totalCartPrice {

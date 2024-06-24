@@ -1,5 +1,5 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/vendor/orders/edit_order_page.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/pages/vendor/orders/edit_order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -178,14 +178,14 @@ class _OrdersPageState extends State<OrdersPage> {
     return Visibility(
       visible: item["status"] != "Delivered",
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
                 Colors.white,
                 Colors.orange.shade100,
               ]),
-              borderRadius: BorderRadius.circular(12)),
+              borderRadius: BorderRadius.circular(8)),
           child: Column(
             children: [
               ListTile(
@@ -195,7 +195,7 @@ class _OrdersPageState extends State<OrdersPage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                subtitle: Text("from ${item["shop_name"]}"),
+                subtitle: Text("by ${item["user_name"]}"),
                 trailing: Text(
                   "₹${item["total_price"].toString()}",
                   style: const TextStyle(
@@ -204,11 +204,11 @@ class _OrdersPageState extends State<OrdersPage> {
                   ),
                 ),
               ),
+              const Divider(),
               ListTile(
-                leading: const Icon(Icons.timer_sharp),
-                title: Text('Status: ${item["status"]}'),
+                title: statusChip(item["status"]!),
                 subtitle: Text(
-                    "by ${item["user_name"]} on ${timestamp.day}/${timestamp.month}/${timestamp.year} at ${(timestamp.hour) % 12}:${timestamp.minute} "),
+                    "on ${timestamp.day}/${timestamp.month}/${timestamp.year} at ${(timestamp.hour) % 12}:${timestamp.minute} "),
                 trailing: ElevatedButton(
                     style: elevatedButtonStyle,
                     onPressed: () {
@@ -220,12 +220,20 @@ class _OrdersPageState extends State<OrdersPage> {
                           )
                           .then((value) => _fetchShopOrders());
                     },
-                    child: const Icon(Icons.edit_note_rounded)),
+                    child: const Text("Edit")),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    onPressed: () {}, child: const Text("Mark as Done")),
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget statusChip(String status) {
+    return Chip(label: Text(status));
   }
 }

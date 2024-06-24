@@ -1,5 +1,8 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/models/cart_item.dart';
+import 'package:eat_caias/models/menu_item.dart';
+import 'package:eat_caias/pages/studteach/cart/cart_controller.dart';
+import 'package:eat_caias/pages/studteach/item_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -142,7 +145,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
             trailing: ElevatedButton(
               style: elevatedButtonStyle.copyWith(
                   backgroundColor:
-                      MaterialStatePropertyAll(Colors.amber.shade200)),
+                      WidgetStatePropertyAll(Colors.amber.shade200)),
               onPressed: () {
                 showDialog(
                     context: context,
@@ -296,6 +299,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
   }
 
   Widget getCustomListTile(int index) {
+    Map<String, dynamic> item = _shopItems[index];
     return Card(
       color: Colors.white,
       elevation: 0,
@@ -306,157 +310,159 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
             width: 1,
           )),
       child: ListTile(
-        enabled: _shopItems[index]["is_inStock"] as bool,
+        enabled: item["is_inStock"] as bool,
         tileColor: Colors.white,
-        title: Text(_shopItems[index]["item_name"]! as String,
-            overflow: TextOverflow.ellipsis),
+        title:
+            Text(item["item_name"]! as String, overflow: TextOverflow.ellipsis),
         subtitle: Text(
-          _shopItems[index]["is_inStock"] as bool
-              ? _shopItems[index]["description"]! as String
+          item["is_inStock"] as bool
+              ? item["description"]! as String
               : "OUT OF STOCK",
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: isVegTag(_shopItems[index]["is_veg"] as bool),
+        trailing: isVegTag(item["is_veg"] as bool),
         onTap: () {
-          var itemCount = 0.obs;
-          showDialog(
-              context: context,
-              builder: (context) => Dialog(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: dialogPadding,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            width: double.infinity,
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: const ButtonStyle(
-                                padding:
-                                    MaterialStatePropertyAll(EdgeInsets.zero)),
-                          ),
-                          _shopItems[index]["image_url"] != null
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 10,
-                                    bottom: 10,
-                                  ),
-                                  child: Container(
-                                    height: 140,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: NetworkImage(_shopItems[index]
-                                            ["image_url"] as String),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
-                          // const SizedBox(height: 10),
-                          Text(_shopItems[index]["item_name"]! as String,
-                              style: const TextStyle(
-                                fontSize: 24,
-                              ),
-                              overflow: TextOverflow.ellipsis),
-                          isVegTag(_shopItems[index]["is_veg"] as bool),
-                          Text(_shopItems[index]["description"]! as String),
-                          const Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "₹${_shopItems[index]["price"] as int}",
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          if (itemCount > 0) {
-                                            setState(() {
-                                              itemCount = RxInt(0);
-                                            });
-                                            Get.find<CartController>()
-                                                .removeFromCart(
-                                                    _shopItems[index]
-                                                            ["item_name"]
-                                                        as String);
-                                            showCartToast(
-                                              "${_shopItems[index]["item_name"]! as String} quantity is 0",
-                                              context,
-                                            );
-                                          }
-                                        });
-                                      },
-                                      icon: const Icon(Icons.close)),
-                                  IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          itemCount++;
-                                        });
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) =>
+                  ItemDetailsPage(item: MenuItem.fromJson(item))));
+          // var itemCount = 0.obs;
+          // showDialog(
+          //     context: context,
+          //     builder: (context) => Dialog(
+          //           alignment: Alignment.bottomCenter,
+          //           child: Padding(
+          //             padding: dialogPadding,
+          //             child: Column(
+          //               mainAxisSize: MainAxisSize.min,
+          //               crossAxisAlignment: CrossAxisAlignment.start,
+          //               children: [
+          //                 const SizedBox(
+          //                   width: double.infinity,
+          //                 ),
+          //                 IconButton(
+          //                   icon: const Icon(Icons.close),
+          //                   onPressed: () {
+          //                     Navigator.of(context).pop();
+          //                   },
+          //                   style: const ButtonStyle(
+          //                       padding:
+          //                           WidgetStatePropertyAll(EdgeInsets.zero)),
+          //                 ),
+          //                 _shopItems[index]["image_url"] != null
+          //                     ? Padding(
+          //                         padding: const EdgeInsets.only(
+          //                           top: 10,
+          //                           bottom: 10,
+          //                         ),
+          //                         child: Container(
+          //                           height: 140,
+          //                           width: double.infinity,
+          //                           decoration: BoxDecoration(
+          //                             image: DecorationImage(
+          //                               image: NetworkImage(_shopItems[index]
+          //                                   ["image_url"] as String),
+          //                               fit: BoxFit.cover,
+          //                             ),
+          //                             borderRadius: BorderRadius.circular(12),
+          //                           ),
+          //                         ),
+          //                       )
+          //                     : const SizedBox(),
+          //                 // const SizedBox(height: 10),
+          //                 Text(_shopItems[index]["item_name"]! as String,
+          //                     style: const TextStyle(
+          //                       fontSize: 24,
+          //                     ),
+          //                     overflow: TextOverflow.ellipsis),
+          //                 isVegTag(_shopItems[index]["is_veg"] as bool),
+          //                 Text(_shopItems[index]["description"]! as String),
+          //                 const Divider(),
+          //                 Row(
+          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                   children: [
+          //                     Text(
+          //                       "₹${_shopItems[index]["price"] as int}",
+          //                       style: const TextStyle(
+          //                           fontSize: 20, fontWeight: FontWeight.bold),
+          //                     ),
+          //                     Row(
+          //                       children: [
+          //                         IconButton(
+          //                             onPressed: () {
+          //                               setState(() {
+          //                                 if (itemCount > 0) {
+          //                                   setState(() {
+          //                                     itemCount = RxInt(0);
+          //                                   });
+          //                                   Get.find<CartController>()
+          //                                       .removeFromCart(
+          //                                           _shopItems[index]
+          //                                                   ["item_name"]
+          //                                               as String);
+          //                                   showCartToast(
+          //                                     "${_shopItems[index]["item_name"]! as String} quantity is 0",
+          //                                     context,
+          //                                   );
+          //                                 }
+          //                               });
+          //                             },
+          //                             icon: const Icon(Icons.close)),
+          //                         IconButton(
+          //                             onPressed: () {
+          //                               setState(() {
+          //                                 itemCount++;
+          //                               });
 
-                                        showCartToast(
-                                            "${_shopItems[index]["item_name"]! as String} (x$itemCount)",
-                                            context);
-                                      },
-                                      icon: const Icon(Icons.add)),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Divider(),
+          //                               showCartToast(
+          //                                   "${_shopItems[index]["item_name"]! as String} (x$itemCount)",
+          //                                   context);
+          //                             },
+          //                             icon: const Icon(Icons.add)),
+          //                       ],
+          //                     ),
+          //                   ],
+          //                 ),
+          //                 const Divider(),
 
-                          _shopDetails['is_open']
-                              ? TextButton(
-                                  style: ButtonStyle(
-                                      backgroundColor: MaterialStatePropertyAll(
-                                          Colors.orange.shade200),
-                                      minimumSize:
-                                          const MaterialStatePropertyAll(
-                                              Size(double.infinity, 40))),
-                                  onPressed: () {
-                                    if (itemCount.value != 0) {
-                                      Get.find<CartController>().addToCart(
-                                          _shopItems[index]["item_name"]
-                                              as String,
-                                          itemCount.value,
-                                          _shopItems[index]["price"] as int,
-                                          widget.shopName);
-                                      showCartToast(
-                                          '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
-                                          context);
-                                      Navigator.of(context).pop();
-                                    } else {
-                                      showCartToast("Quantity is nil", context);
-                                    }
-                                  },
-                                  child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.shopping_cart_outlined),
-                                      SizedBox(width: 10),
-                                      Text("Add To Cart"),
-                                    ],
-                                  ),
-                                )
-                              : const Center(child: Text("Shop is closed")),
-                          const SizedBox(height: 6),
-                        ],
-                      ),
-                    ),
-                  ));
+          //                 _shopDetails['is_open']
+          //                     ? TextButton(
+          //                         style: ButtonStyle(
+          //                             backgroundColor: WidgetStatePropertyAll(
+          //                                 Colors.orange.shade200),
+          //                             minimumSize: const WidgetStatePropertyAll(
+          //                                 Size(double.infinity, 40))),
+          //                         onPressed: () {
+          //                           if (itemCount.value != 0) {
+          //                             Get.find<CartController>().addToCart(
+          //                                 _shopItems[index]["item_name"]
+          //                                     as String,
+          //                                 itemCount.value,
+          //                                 _shopItems[index]["price"] as int,
+          //                                 widget.shopName);
+          //                             showCartToast(
+          //                                 '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
+          //                                 context);
+          //                             Navigator.of(context).pop();
+          //                           } else {
+          //                             showCartToast("Quantity is nil", context);
+          //                           }
+          //                         },
+          //                         child: const Row(
+          //                           mainAxisAlignment: MainAxisAlignment.center,
+          //                           children: [
+          //                             Icon(Icons.shopping_cart_outlined),
+          //                             SizedBox(width: 10),
+          //                             Text("Add To Cart"),
+          //                           ],
+          //                         ),
+          //                       )
+          //                     : const Center(child: Text("Shop is closed")),
+          //                 const SizedBox(height: 6),
+          //               ],
+          //             ),
+          //           ),
+          //         ));
         },
         onLongPress: () {
           ScaffoldMessenger.of(context).showSnackBar(

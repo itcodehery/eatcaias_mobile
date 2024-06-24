@@ -1,7 +1,7 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
-import 'package:Eat.Caias/pages/studteach/cart/shop_selection_page.dart';
-import 'package:Eat.Caias/pages/studteach/tickets/ticket_controller.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/pages/studteach/cart/cart_controller.dart';
+import 'package:eat_caias/pages/studteach/cart/shop_selection_page.dart';
+import 'package:eat_caias/pages/studteach/tickets/ticket_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,7 +14,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late final dynamic cartController;
+  late final CartController cartController;
   String? username;
 
   //shopname and price of the shop's items
@@ -33,8 +33,10 @@ class _CartPageState extends State<CartPage> {
           username = (response['username'] ?? " ") as String;
         });
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Username is null')));
+        mounted
+            ? ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Username is null')))
+            : null;
       }
     } on PostgrestException catch (error) {
       if (mounted) {
@@ -59,10 +61,11 @@ class _CartPageState extends State<CartPage> {
     try {
       await supabase.from('ticket').insert([
         {
-          'item_names': itemNames,
+          'item_name': itemNames,
           'shop_name': shopName,
           'user_name': username,
           'total_price': totalPrice,
+          'status': "Pending",
         }
       ]);
     } on PostgrestException catch (error) {
@@ -86,6 +89,7 @@ class _CartPageState extends State<CartPage> {
         shopNameList[element.shopName] = 0;
       }
     }
+    debugPrint(shopNameList.toString());
   }
 
   @override
@@ -129,11 +133,10 @@ class _CartPageState extends State<CartPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      //add cart-empty.png from assets folder
                       Image.asset(
-                        "../assets/cart-empty.png",
-                        fit: BoxFit.contain,
-                        width: 250,
-                        height: 250,
+                        'assets/cart-empty.png',
+                        height: 200,
                       ),
                       const Text(
                         'Your cart is empty!',
@@ -198,26 +201,27 @@ class _CartPageState extends State<CartPage> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => ShopSelectionPage(
-                                        shopNameList: shopNameList,
+                                        shopNameList:
+                                            cartController.shopNamesAndPrices,
                                       ),
                                     ),
                                   );
-                                  cartController = Get.find<CartController>();
-                                  if (username != null) {
-                                    for (var element
-                                        in cartController.cartItems) {
-                                      addToTicketDatabase(
-                                          element.title,
-                                          element.shopName,
-                                          username!,
-                                          element.totalPrice);
-                                    }
-                                    cartController.purgeCart();
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text('Username is null')));
-                                  }
+
+                                  // if (username != null) {
+                                  //   for (var element
+                                  //       in cartController.cartItems) {
+                                  //     addToTicketDatabase(
+                                  //         element.title,
+                                  //         element.shopName,
+                                  //         username!,
+                                  //         element.totalPrice);
+                                  //   }
+                                  //   cartController.purgeCart();
+                                  // } else {
+                                  //   ScaffoldMessenger.of(context).showSnackBar(
+                                  //       const SnackBar(
+                                  //           content: Text('Username is null')));
+                                  // }
                                 },
                                 child: const Text('Yes'),
                               ),
@@ -271,7 +275,7 @@ class CartListTile extends StatelessWidget {
             icon: const Icon(Icons.remove_circle_outline),
             color: Colors.white,
             style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.brown)),
+                backgroundColor: WidgetStatePropertyAll(Colors.brown)),
             onPressed: () {
               Get.find<CartController>().removeFromCart(title);
               Get.find<TicketController>();

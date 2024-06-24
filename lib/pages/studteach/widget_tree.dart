@@ -1,6 +1,6 @@
-import 'package:Eat.Caias/pages/studteach/home.dart';
-import 'package:Eat.Caias/pages/studteach/leaderboard/leaderboards_page.dart';
-import 'package:Eat.Caias/pages/studteach/tickets/ticket_list_page.dart';
+import 'package:eat_caias/pages/studteach/home.dart';
+import 'package:eat_caias/pages/studteach/leaderboard/leaderboards_page.dart';
+import 'package:eat_caias/pages/studteach/tickets/ticket_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

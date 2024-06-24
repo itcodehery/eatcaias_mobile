@@ -1,4 +1,4 @@
-import 'package:Eat.Caias/constants.dart';
+import 'package:eat_caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -33,8 +33,9 @@ class _AddItemPageState extends State<AddItemPage> {
   //build
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (value) async {
         showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -57,7 +58,6 @@ class _AddItemPageState extends State<AddItemPage> {
                     ),
                   ],
                 ));
-        return false;
       },
       child: Scaffold(
         appBar: AppBar(

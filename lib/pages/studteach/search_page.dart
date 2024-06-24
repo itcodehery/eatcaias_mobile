@@ -1,6 +1,6 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/studteach/cart/cart_controller.dart';
-import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/pages/studteach/cart/cart_controller.dart';
+import 'package:eat_caias/pages/studteach/shop_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,6 +21,7 @@ class _SearchPageState extends State<SearchPage> {
   String _input = '';
   String noFood = "";
   String noCanteen = "";
+  String maybeSpelling = "";
   bool isFoodQuery = true;
   SearchType _selectedSearchType = SearchType.food;
   final TextEditingController _searchController = TextEditingController();
@@ -42,6 +43,7 @@ class _SearchPageState extends State<SearchPage> {
         setState(() {
           _shopItems = [];
           noFood = "No food for $itemName";
+          maybeSpelling = "Maybe a spelling mistake?";
         });
       }
     } on PostgrestException catch (error) {
@@ -77,6 +79,7 @@ class _SearchPageState extends State<SearchPage> {
         setState(() {
           _shopList = [];
           noCanteen = "No canteens for $shopName";
+          maybeSpelling = "Maybe a spelling mistake?";
         });
       }
     } on PostgrestException catch (error) {
@@ -130,14 +133,14 @@ class _SearchPageState extends State<SearchPage> {
                 title: const Text('Search Type'),
                 trailing: SegmentedButton(
                   style: ButtonStyle(
-                      side: MaterialStatePropertyAll(BorderSide(
+                      side: WidgetStatePropertyAll(BorderSide(
                         color: Theme.of(context).colorScheme.inversePrimary,
                         width: 0,
                       )),
-                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       )),
-                      foregroundColor: MaterialStatePropertyAll(
+                      foregroundColor: WidgetStatePropertyAll(
                           Theme.of(context).colorScheme.primary)),
                   segments: const [
                     ButtonSegment(value: SearchType.food, label: Text('Food')),
@@ -174,12 +177,20 @@ class _SearchPageState extends State<SearchPage> {
                     ))
                   : Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        noFood,
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            noFood,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(maybeSpelling)
+                        ],
                       ))
               : (_shopList).isNotEmpty
                   ? Expanded(
@@ -193,12 +204,20 @@ class _SearchPageState extends State<SearchPage> {
                     ))
                   : Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        noCanteen,
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            noCanteen,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(maybeSpelling),
+                        ],
                       )),
         ]));
   }
@@ -247,8 +266,8 @@ class _SearchPageState extends State<SearchPage> {
                                 Navigator.of(context).pop();
                               },
                               style: const ButtonStyle(
-                                  padding: MaterialStatePropertyAll(
-                                      EdgeInsets.zero)),
+                                  padding:
+                                      WidgetStatePropertyAll(EdgeInsets.zero)),
                             ),
                             const SizedBox(height: 10),
                             Text(_shopItems[index]["item_name"]! as String,
@@ -314,9 +333,9 @@ class _SearchPageState extends State<SearchPage> {
                             const Divider(),
                             TextButton(
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStatePropertyAll(
+                                  backgroundColor: WidgetStatePropertyAll(
                                       Colors.orange.shade200),
-                                  minimumSize: const MaterialStatePropertyAll(
+                                  minimumSize: const WidgetStatePropertyAll(
                                       Size(double.infinity, 40))),
                               onPressed: () {
                                 if (itemCount != 0) {

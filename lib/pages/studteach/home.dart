@@ -1,5 +1,5 @@
-import 'package:Eat.Caias/constants.dart';
-import 'package:Eat.Caias/pages/studteach/shop_details_page.dart';
+import 'package:eat_caias/constants.dart';
+import 'package:eat_caias/pages/studteach/shop_details_page.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -214,7 +214,8 @@ class HomeState extends State<Home> {
                   ),
             _listOfShops.isNotEmpty
                 ? Padding(
-                    padding: cardPadding,
+                    padding:
+                        cardPadding.add(const EdgeInsets.only(bottom: 80.0)),
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
