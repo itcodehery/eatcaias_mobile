@@ -24,8 +24,7 @@ dependencies:
   gettext: ^1.2.0
   get: ^4.6.6
   shimmer_animation: ^2.1.0+1
-  upi_pay: ^1.0.1
-  flutter_pay: ^1.0.2
+  upi_india: ^3.0.1
   
 
 dev_dependencies:

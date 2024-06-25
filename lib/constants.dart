@@ -26,7 +26,18 @@ var brownTextStyle = TextStyle(
   color: Colors.brown.shade700,
 );
 
+var headerTextStyle = TextStyle(
+  color: Colors.brown.shade800,
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+);
+
 var elevatedButtonStyle = ButtonStyle(
+    elevation: const WidgetStatePropertyAll(0),
+    backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+    foregroundColor: WidgetStatePropertyAll(Colors.brown.shade800));
+
+var iconButtonStyle = ButtonStyle(
     elevation: const WidgetStatePropertyAll(0),
     backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
     foregroundColor: WidgetStatePropertyAll(Colors.brown.shade800));
@@ -227,5 +238,22 @@ ListTile vendorListTile(Map<String, dynamic> shopDetails,
     subtitle: shopDetails.isNotEmpty
         ? Text("Manage your $manageType, ${vendorUserDetails["vendorname"]}!")
         : null,
+  );
+}
+
+Widget isStockedTag() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+    child: Container(
+        decoration: BoxDecoration(
+          color: tertiaryColor,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+            child: Text(
+              "IN STOCK",
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ))),
   );
 }
