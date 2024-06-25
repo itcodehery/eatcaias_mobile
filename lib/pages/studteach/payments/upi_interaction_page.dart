@@ -1,6 +1,7 @@
 import 'package:eat_caias/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:upi_india/upi_india.dart';
 
 class UpiInteractionPage extends StatefulWidget {
@@ -21,8 +22,8 @@ class _UpiInteractionPageState extends State<UpiInteractionPage> {
   Future<UpiResponse>? _transaction;
   final UpiIndia _upiIndia = UpiIndia();
   List<UpiApp>? apps;
-
-  Future<void> getUPIApps() async {}
+  String upiID = "haririo321@oksbi";
+  String upiName = 'Hari';
 
   @override
   void initState() {
@@ -31,19 +32,60 @@ class _UpiInteractionPageState extends State<UpiInteractionPage> {
         apps = value;
       });
     }).catchError((e) {
-      apps = [];
+      setState(() {
+        apps = [];
+        Get.showSnackbar(
+            normalGetSnackBar("No Cash, Honey!", "No UPI apps found"));
+      });
     });
+    _fetchVendorDetails();
     super.initState();
+  }
+
+  Future<void> _fetchVendorDetails() async {
+    try {
+      final response = await supabase
+          .from('vendor_user')
+          .select()
+          .eq('shop_name', widget.shopName)
+          .single();
+
+      if (response.isNotEmpty) {
+        setState(() {
+          upiID = (response['upi_id'] ?? "haririo321@oksbi") as String;
+          upiName = (response['upi_name'] ?? "Hari") as String;
+        });
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(normalSnackBar("No Vendor UPI ID Found!"));
+        }
+      }
+    } on PostgrestException catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: Text(error.message),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        SnackBar(
+          content: const Text('Unexpected error occurred'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    }
   }
 
   Future<UpiResponse> initiateTransaction(UpiApp app) async {
     return _upiIndia.startTransaction(
       app: app,
-      receiverUpiId: "9078600498@ybl",
-      receiverName: 'Md Azharuddin',
-      transactionRefId: 'TestingUpiIndiaPlugin',
-      transactionNote: 'Example Payment.',
-      amount: widget.totalPrice.toDouble(),
+      receiverUpiId: upiID,
+      receiverName: upiName,
+      transactionRefId: 'EatCaiasPayment',
+      transactionNote: 'Eat.CAIAS to ${widget.shopName}',
+      amount: widget.totalPrice.toDouble() + widget.totalPrice / 10,
     );
   }
 
@@ -63,27 +105,17 @@ class _UpiInteractionPageState extends State<UpiInteractionPage> {
           physics: const BouncingScrollPhysics(),
           child: Wrap(
             children: apps!.map<Widget>((UpiApp app) {
-              return GestureDetector(
+              return ListTile(
                 onTap: () {
-                  _transaction = initiateTransaction(app);
-                  setState(() {});
+                  setState(() {
+                    _transaction = initiateTransaction(app);
+                  });
                 },
-                child: SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.memory(
-                        app.icon,
-                        height: 60,
-                        width: 60,
-                      ),
-                      Text(app.name),
-                    ],
-                  ),
+                leading: Image.memory(
+                  app.icon,
+                  width: 40,
                 ),
+                title: Text(app.name),
               );
             }).toList(),
           ),
@@ -142,13 +174,73 @@ class _UpiInteractionPageState extends State<UpiInteractionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Select your UPI App'),
+      appBar: AppBar(
+        title: const Text('Select your UPI App'),
+      ),
+      body: Column(children: <Widget>[
+        Expanded(
+          child: displayUpiApps(),
         ),
-        body: Column(children: <Widget>[
-          Expanded(
-            child: displayUpiApps(),
+        Expanded(
+          child: FutureBuilder(
+            future: _transaction,
+            builder:
+                (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  Get.showSnackbar(normalGetSnackBar(
+                      "Oops!", _upiErrorHandler(snapshot.error.runtimeType)));
+                  return const Center(
+                    child: Text(""), // Print's text message on screen
+                  );
+                }
+
+                // If we have data then definitely we will have UpiResponse.
+                // It cannot be null
+                UpiResponse upiResponse = snapshot.data!;
+
+                // Data in UpiResponse can be null. Check before printing
+                String txnId = upiResponse.transactionId ?? 'N/A';
+                String resCode = upiResponse.responseCode ?? 'N/A';
+                String txnRef = upiResponse.transactionRefId ?? 'N/A';
+                String status = upiResponse.status ?? 'N/A';
+                String approvalRef = upiResponse.approvalRefNo ?? 'N/A';
+                _checkTxnStatus(status);
+
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      displayTransactionData('Transaction Id', txnId),
+                      displayTransactionData('Response Code', resCode),
+                      displayTransactionData('Reference Id', txnRef),
+                      displayTransactionData('Status', status.toUpperCase()),
+                      displayTransactionData('Approval No', approvalRef),
+                    ],
+                  ),
+                );
+              } else {
+                return const Center(
+                  child: Text(''),
+                );
+              }
+            },
           ),
-        ]));
+        ),
+      ]),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Text('Paying to ${widget.shopName}'),
+                const Spacer(),
+                Text("₹${widget.totalPrice}.00 + ${widget.totalPrice / 10} Tax",
+                    style: headerTextStyle),
+              ],
+            )),
+      ),
+    );
   }
 }

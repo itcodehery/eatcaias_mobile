@@ -1,7 +1,6 @@
+import 'package:eat_caias/constants.dart';
 import 'package:eat_caias/pages/studteach/payments/upi_interaction_page.dart';
 import 'package:flutter/material.dart';
-
-enum PaymentMethod { upi, cod, cc, dc }
 
 class PaymentMethodPage extends StatefulWidget {
   const PaymentMethodPage(

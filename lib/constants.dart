@@ -22,6 +22,8 @@ enum OrderStatus {
 
 enum FilterMenuItem { atoz, ztoa, vegOnly, nonVegOnly, inStock, outOfStock }
 
+enum PaymentMethod { upi, cod, cc, dc }
+
 var brownTextStyle = TextStyle(
   color: Colors.brown.shade700,
 );
@@ -128,7 +130,7 @@ SnackBar normalSnackBar(String message) {
 GetSnackBar normalGetSnackBar(String title, String message) {
   return GetSnackBar(
     backgroundColor: Colors.amber.shade600,
-    duration: const Duration(seconds: 2),
+    duration: const Duration(seconds: 5),
     titleText: Text(title,
         style:
             brownTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600)),

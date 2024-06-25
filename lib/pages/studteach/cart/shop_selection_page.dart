@@ -114,7 +114,45 @@ class _ShopSelectionPageState extends State<ShopSelectionPage> {
                 ),
                 overflow: TextOverflow.fade),
             trailing: ElevatedButton(
-                onPressed: () {}, child: const Text("Know More")),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: Padding(
+                            padding: dialogPadding,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text("Canteen Policy",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                                const SizedBox(height: 10),
+                                const Text(
+                                    "Once the order is placed, it cannot be cancelled or returned. Please make sure to check your order before placing it.",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    )),
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    const Spacer(),
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("Close"))
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                },
+                child: const Text("Know More")),
           ),
         ),
       ),

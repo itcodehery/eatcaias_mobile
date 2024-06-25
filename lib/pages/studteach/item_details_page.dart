@@ -87,38 +87,45 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     subtitle: Text("from ${currentItem.shopName}"),
                   ),
                   const Divider(),
-                  ListTile(
-                    title: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.amber.shade600,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            style: iconButtonStyle,
-                            icon: const Icon(Icons.remove),
-                            onPressed: () {
-                              setState(() {
-                                quantity = quantity > 0 ? quantity - 1 : 0;
-                              });
-                            },
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.amber.withAlpha(50),
+                            borderRadius: BorderRadius.circular(7),
                           ),
-                          Text(quantity.toString(), style: headerTextStyle),
-                          IconButton(
-                            style: iconButtonStyle,
-                            icon: const Icon(Icons.add),
-                            onPressed: () {
-                              setState(() {
-                                quantity = quantity + 1;
-                              });
-                            },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                style: iconButtonStyle,
+                                icon: const Icon(Icons.remove),
+                                onPressed: () {
+                                  setState(() {
+                                    quantity = quantity > 0 ? quantity - 1 : 0;
+                                  });
+                                },
+                              ),
+                              Text(quantity.toString(), style: headerTextStyle),
+                              IconButton(
+                                style: iconButtonStyle,
+                                icon: const Icon(Icons.add),
+                                onPressed: () {
+                                  setState(() {
+                                    quantity = quantity + 1;
+                                  });
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const Spacer(),
+                        isStockedTag(),
+                      ],
                     ),
-                    trailing: isStockedTag(),
                   ),
                 ],
               ),
