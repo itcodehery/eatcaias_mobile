@@ -1,10 +1,7 @@
 import 'package:eat_caias/constants.dart';
 import 'package:eat_caias/pages/studteach/shop_details_page.dart';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
-
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Home extends StatefulWidget {
@@ -18,17 +15,24 @@ class HomeState extends State<Home> {
   //variables
   String? offer;
   late List<Map<String, dynamic>> _listOfShops = [];
+  int points = 0;
 
   //fetch shops
   Future<void> _fetchShops() async {
     try {
       final data = await supabase.from('canteen_shop').select();
       final offers = await supabase.from('offers').select();
+      final userData = await supabase
+          .from('studteach_user')
+          .select()
+          .eq('email', supabase.auth.currentUser?.email as String)
+          .single();
       if (data.isNotEmpty) {
         setState(() {
           _listOfShops = data;
           _listOfShops.sort(
               (a, b) => a["shop_name"].toString().compareTo(b["shop_name"]));
+          points = userData["points"] as int;
         });
       } else {
         return;
@@ -67,7 +71,7 @@ class HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('eat.caias'),
+        title: mainLogoMark(),
         bottom: PreferredSize(
             preferredSize: const Size.fromHeight(85),
             child: Padding(
@@ -85,7 +89,7 @@ class HomeState extends State<Home> {
               ),
             )),
         actions: [
-          pointsTag(21),
+          pointsTag(points, context),
           IconButton(
               onPressed: () {
                 Navigator.of(context).pushNamed("/profile");

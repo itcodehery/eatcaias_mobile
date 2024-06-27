@@ -130,7 +130,7 @@ SnackBar normalSnackBar(String message) {
 GetSnackBar normalGetSnackBar(String title, String message) {
   return GetSnackBar(
     backgroundColor: Colors.amber.shade600,
-    duration: const Duration(seconds: 5),
+    duration: const Duration(seconds: 3),
     titleText: Text(title,
         style:
             brownTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600)),
@@ -171,17 +171,62 @@ const mainButtonsStyle = ButtonStyle(
 
 EdgeInsets cardPadding = const EdgeInsets.symmetric(vertical: 2, horizontal: 6);
 
-Widget pointsTag(int points) {
-  return Padding(
-    padding: cardPadding,
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.black.withAlpha(10),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: InkWell(
-        onTap: () {},
+Widget pointsTag(int points, BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      showDialog(
+          context: context,
+          builder: (context) => Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding: dialogPadding,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          mainLogoMark(),
+                          const SizedBox(width: 6),
+                          Text(
+                            'points',
+                            style: brownTextStyle.copyWith(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'You have $points points! Earn more points by ordering from your favourite restaurants, gathering achievements or by referring a friend and redeem them for exciting offers!',
+                        style: brownTextStyle.copyWith(fontSize: 14),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Spacer(),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Close'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ));
+    },
+    child: Padding(
+      padding: cardPadding,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withAlpha(10),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Text(
           '🔥 $points points',
           style: const TextStyle(),
@@ -257,5 +302,44 @@ Widget isStockedTag() {
               "IN STOCK",
               style: TextStyle(color: Colors.white, fontSize: 14),
             ))),
+  );
+}
+
+Widget isPaidTag() {
+  return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [
+          Colors.amber.shade400,
+          Colors.orange.shade400,
+        ]),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          child: Text(
+            "PAID",
+            style: TextStyle(color: Colors.black, fontSize: 14),
+          )));
+}
+
+Widget mainLogoMark() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        'eat.',
+        style: TextStyle(
+          color: Colors.brown.shade600,
+          fontSize: 24,
+        ),
+      ),
+      Text('caias',
+          style: TextStyle(
+            color: Colors.amber.shade800,
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          )),
+    ],
   );
 }

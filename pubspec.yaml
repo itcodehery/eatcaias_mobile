@@ -24,7 +24,8 @@ dependencies:
   gettext: ^1.2.0
   get: ^4.6.6
   shimmer_animation: ^2.1.0+1
-  upi_india: ^3.0.1
+  easy_upi_payment: ^0.1.6
+  ticket_widget: ^1.0.2
   
 
 dev_dependencies:

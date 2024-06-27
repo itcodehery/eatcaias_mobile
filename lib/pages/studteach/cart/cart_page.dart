@@ -95,152 +95,262 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            const Text('eat.caias / '),
-            Text(
-              'my cart',
-              style: TextStyle(color: Colors.amber.shade800),
-            )
-          ],
+        appBar: AppBar(
+          title: Row(
+            children: [
+              const Text('eat.caias / '),
+              Text(
+                'my cart',
+                style: TextStyle(color: Colors.amber.shade800),
+              )
+            ],
+          ),
         ),
-      ),
-      body: GetX<CartController>(
-          init: CartController(),
-          builder: (controller) {
-            return controller.cartItems.isNotEmpty
-                ? ListView.builder(
-                    itemCount: controller.cartItems.length,
-                    itemBuilder: (context, index) {
-                      shopNameList[controller.cartItems
-                          .elementAt(index)
-                          .shopName] = shopNameList[
-                              controller.cartItems.elementAt(index).shopName]! +
-                          controller.cartItems.elementAt(index).price;
-                      return CartListTile(
-                        title: controller.cartItems.elementAt(index).title,
-                        price: controller.cartItems.elementAt(index).totalPrice,
-                        quantity:
-                            controller.cartItems.elementAt(index).quantity,
-                        shopName:
-                            controller.cartItems.elementAt(index).shopName,
-                      );
-                    },
-                  )
-                : Center(
-                    child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      //add cart-empty.png from assets folder
-                      Image.asset(
-                        'assets/cart-empty.png',
-                        height: 200,
-                      ),
-                      const Text(
-                        'Your cart is empty!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ));
-          }),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          if (cartController.totalCartPrice != 0) {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+        body: GetX<CartController>(
+            init: CartController(),
+            builder: (controller) {
+              return controller.cartItems.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: controller.cartItems.length,
+                      itemBuilder: (context, index) {
+                        shopNameList[controller.cartItems
+                            .elementAt(index)
+                            .shopName] = shopNameList[controller.cartItems
+                                .elementAt(index)
+                                .shopName]! +
+                            controller.cartItems.elementAt(index).price;
+                        return CartListTile(
+                          title: controller.cartItems.elementAt(index).title,
+                          price:
+                              controller.cartItems.elementAt(index).totalPrice,
+                          quantity:
+                              controller.cartItems.elementAt(index).quantity,
+                          shopName:
+                              controller.cartItems.elementAt(index).shopName,
+                        );
+                      },
+                    )
+                  : Center(
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Text('Order Confirmation',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                            ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        //add cart-empty.png from assets folder
+                        Image.asset(
+                          'assets/cart-empty.png',
+                          height: 200,
+                        ),
+                        const Text(
+                          'Your cart is empty!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const ListTile(
-                              title: Text(
-                                  'Are you sure you want to place this order?')),
-                          const Divider(),
-                          ListTile(
-                            title: const Text('Total Price:'),
-                            trailing: Text(
-                              '₹${cartController.totalCartPrice}',
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('No'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => ShopSelectionPage(
-                                        shopNameList:
-                                            cartController.shopNamesAndPrices,
+                        ),
+                      ],
+                    ));
+            }),
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.transparent,
+          elevation: 0,
+          child: cartController.totalCartPrice != 0
+              ? Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                        Colors.amber.shade400,
+                        Colors.orange.shade400,
+                      ]),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ElevatedButton(
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(Colors.transparent),
+                          elevation: WidgetStatePropertyAll(0),
+                          shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          ))),
+                      onPressed: () {
+                        cartController.totalCartPrice != 0
+                            ? showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: Text('Order Confirmation',
+                                                  style: TextStyle(
+                                                    fontSize: 22,
+                                                    fontWeight: FontWeight.bold,
+                                                  )),
+                                            ),
+                                          ),
+                                          const ListTile(
+                                              title: Text(
+                                                  'Are you sure you want to place this order?')),
+                                          const Divider(),
+                                          ListTile(
+                                            title: const Text('Total Price:'),
+                                            trailing: Text(
+                                              '₹${cartController.totalCartPrice}',
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Spacer(),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('No'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ShopSelectionPage(
+                                                        shopNameList: cartController
+                                                            .shopNamesAndPrices,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: const Text('Yes'),
+                                              ),
+                                            ],
+                                          )
+                                        ],
                                       ),
                                     ),
                                   );
-
-                                  // if (username != null) {
-                                  //   for (var element
-                                  //       in cartController.cartItems) {
-                                  //     addToTicketDatabase(
-                                  //         element.title,
-                                  //         element.shopName,
-                                  //         username!,
-                                  //         element.totalPrice);
-                                  //   }
-                                  //   cartController.purgeCart();
-                                  // } else {
-                                  //   ScaffoldMessenger.of(context).showSnackBar(
-                                  //       const SnackBar(
-                                  //           content: Text('Username is null')));
-                                  // }
-                                },
-                                child: const Text('Yes'),
-                              ),
-                            ],
-                          )
+                                })
+                            : ScaffoldMessenger.of(context).showSnackBar(
+                                normalSnackBar(
+                                    'Add some items to cart to place order!'));
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.shopping_cart_outlined),
+                          SizedBox(width: 10),
+                          Text("Checkout Cart"),
                         ],
                       ),
                     ),
-                  );
-                });
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                normalSnackBar('Add some items to cart to place order!'));
-          }
-        },
-        icon: const Icon(Icons.shopping_cart_checkout),
-        label: Obx(() => Text(' ₹${cartController.totalCartPrice}')),
-      ),
-    );
+                  ))
+              : Container(),
+          // floatingActionButton: FloatingActionButton.extended(
+          //   onPressed: () {
+          //     if (cartController.totalCartPrice != 0) {
+          //       showDialog(
+          //           context: context,
+          //           builder: (context) {
+          //             return Dialog(
+          //               child: Padding(
+          //                 padding: const EdgeInsets.all(16.0),
+          //                 child: Column(
+          //                   mainAxisSize: MainAxisSize.min,
+          //                   crossAxisAlignment: CrossAxisAlignment.start,
+          //                   children: [
+          //                     const Padding(
+          //                       padding: EdgeInsets.all(8.0),
+          //                       child: Center(
+          //                         child: Text('Order Confirmation',
+          //                             style: TextStyle(
+          //                               fontSize: 22,
+          //                               fontWeight: FontWeight.bold,
+          //                             )),
+          //                       ),
+          //                     ),
+          //                     const ListTile(
+          //                         title: Text(
+          //                             'Are you sure you want to place this order?')),
+          //                     const Divider(),
+          //                     ListTile(
+          //                       title: const Text('Total Price:'),
+          //                       trailing: Text(
+          //                         '₹${cartController.totalCartPrice}',
+          //                         style: const TextStyle(
+          //                           color: Colors.black,
+          //                           fontWeight: FontWeight.bold,
+          //                           fontSize: 20,
+          //                         ),
+          //                       ),
+          //                     ),
+          //                     Row(
+          //                       children: [
+          //                         const Spacer(),
+          //                         TextButton(
+          //                           onPressed: () {
+          //                             Navigator.pop(context);
+          //                           },
+          //                           child: const Text('No'),
+          //                         ),
+          //                         TextButton(
+          //                           onPressed: () {
+          //                             Navigator.of(context).pop();
+          //                             Navigator.of(context).push(
+          //                               MaterialPageRoute(
+          //                                 builder: (context) => ShopSelectionPage(
+          //                                   shopNameList:
+          //                                       cartController.shopNamesAndPrices,
+          //                                 ),
+          //                               ),
+          //                             );
+
+          //                             // if (username != null) {
+          //                             //   for (var element
+          //                             //       in cartController.cartItems) {
+          //                             //     addToTicketDatabase(
+          //                             //         element.title,
+          //                             //         element.shopName,
+          //                             //         username!,
+          //                             //         element.totalPrice);
+          //                             //   }
+          //                             //   cartController.purgeCart();
+          //                             // } else {
+          //                             //   ScaffoldMessenger.of(context).showSnackBar(
+          //                             //       const SnackBar(
+          //                             //           content: Text('Username is null')));
+          //                             // }
+          //                           },
+          //                           child: const Text('Yes'),
+          //                         ),
+          //                       ],
+          //                     )
+          //                   ],
+          //                 ),
+          //               ),
+          //             );
+          //           });
+          //     } else {
+          //       ScaffoldMessenger.of(context).showSnackBar(
+          //           normalSnackBar('Add some items to cart to place order!'));
+          //     }
+          //   },
+          //   icon: const Icon(Icons.shopping_cart_checkout),
+          //   label: Obx(() => Text(' ₹${cartController.totalCartPrice}')),
+          // ),
+        ));
   }
 }
 

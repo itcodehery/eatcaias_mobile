@@ -1,4 +1,4 @@
-List<Map<String, dynamic>> leaderboards = [
+List<Map<String, dynamic>> yo = [
   {
     "name": "JocksonNeatSecurity",
     "rank": "1",

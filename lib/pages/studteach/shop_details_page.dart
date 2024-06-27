@@ -280,7 +280,8 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                       ? ListView.builder(
                           itemCount: _shopItems.length,
                           itemBuilder: (context, index) {
-                            return getCustomListTile(index);
+                            return getCustomListTile(
+                                index, _shopDetails['is_open']! as bool);
                           },
                         )
                       : const Center(
@@ -298,7 +299,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
     );
   }
 
-  Widget getCustomListTile(int index) {
+  Widget getCustomListTile(int index, bool isShopOpen) {
     Map<String, dynamic> item = _shopItems[index];
     return Card(
       color: Colors.white,
@@ -324,145 +325,10 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
         trailing: isVegTag(item["is_veg"] as bool),
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  ItemDetailsPage(item: MenuItem.fromJson(item))));
-          // var itemCount = 0.obs;
-          // showDialog(
-          //     context: context,
-          //     builder: (context) => Dialog(
-          //           alignment: Alignment.bottomCenter,
-          //           child: Padding(
-          //             padding: dialogPadding,
-          //             child: Column(
-          //               mainAxisSize: MainAxisSize.min,
-          //               crossAxisAlignment: CrossAxisAlignment.start,
-          //               children: [
-          //                 const SizedBox(
-          //                   width: double.infinity,
-          //                 ),
-          //                 IconButton(
-          //                   icon: const Icon(Icons.close),
-          //                   onPressed: () {
-          //                     Navigator.of(context).pop();
-          //                   },
-          //                   style: const ButtonStyle(
-          //                       padding:
-          //                           WidgetStatePropertyAll(EdgeInsets.zero)),
-          //                 ),
-          //                 _shopItems[index]["image_url"] != null
-          //                     ? Padding(
-          //                         padding: const EdgeInsets.only(
-          //                           top: 10,
-          //                           bottom: 10,
-          //                         ),
-          //                         child: Container(
-          //                           height: 140,
-          //                           width: double.infinity,
-          //                           decoration: BoxDecoration(
-          //                             image: DecorationImage(
-          //                               image: NetworkImage(_shopItems[index]
-          //                                   ["image_url"] as String),
-          //                               fit: BoxFit.cover,
-          //                             ),
-          //                             borderRadius: BorderRadius.circular(12),
-          //                           ),
-          //                         ),
-          //                       )
-          //                     : const SizedBox(),
-          //                 // const SizedBox(height: 10),
-          //                 Text(_shopItems[index]["item_name"]! as String,
-          //                     style: const TextStyle(
-          //                       fontSize: 24,
-          //                     ),
-          //                     overflow: TextOverflow.ellipsis),
-          //                 isVegTag(_shopItems[index]["is_veg"] as bool),
-          //                 Text(_shopItems[index]["description"]! as String),
-          //                 const Divider(),
-          //                 Row(
-          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                   children: [
-          //                     Text(
-          //                       "₹${_shopItems[index]["price"] as int}",
-          //                       style: const TextStyle(
-          //                           fontSize: 20, fontWeight: FontWeight.bold),
-          //                     ),
-          //                     Row(
-          //                       children: [
-          //                         IconButton(
-          //                             onPressed: () {
-          //                               setState(() {
-          //                                 if (itemCount > 0) {
-          //                                   setState(() {
-          //                                     itemCount = RxInt(0);
-          //                                   });
-          //                                   Get.find<CartController>()
-          //                                       .removeFromCart(
-          //                                           _shopItems[index]
-          //                                                   ["item_name"]
-          //                                               as String);
-          //                                   showCartToast(
-          //                                     "${_shopItems[index]["item_name"]! as String} quantity is 0",
-          //                                     context,
-          //                                   );
-          //                                 }
-          //                               });
-          //                             },
-          //                             icon: const Icon(Icons.close)),
-          //                         IconButton(
-          //                             onPressed: () {
-          //                               setState(() {
-          //                                 itemCount++;
-          //                               });
-
-          //                               showCartToast(
-          //                                   "${_shopItems[index]["item_name"]! as String} (x$itemCount)",
-          //                                   context);
-          //                             },
-          //                             icon: const Icon(Icons.add)),
-          //                       ],
-          //                     ),
-          //                   ],
-          //                 ),
-          //                 const Divider(),
-
-          //                 _shopDetails['is_open']
-          //                     ? TextButton(
-          //                         style: ButtonStyle(
-          //                             backgroundColor: WidgetStatePropertyAll(
-          //                                 Colors.orange.shade200),
-          //                             minimumSize: const WidgetStatePropertyAll(
-          //                                 Size(double.infinity, 40))),
-          //                         onPressed: () {
-          //                           if (itemCount.value != 0) {
-          //                             Get.find<CartController>().addToCart(
-          //                                 _shopItems[index]["item_name"]
-          //                                     as String,
-          //                                 itemCount.value,
-          //                                 _shopItems[index]["price"] as int,
-          //                                 widget.shopName);
-          //                             showCartToast(
-          //                                 '${_shopItems[index]["item_name"]} (x$itemCount) added to Cart',
-          //                                 context);
-          //                             Navigator.of(context).pop();
-          //                           } else {
-          //                             showCartToast("Quantity is nil", context);
-          //                           }
-          //                         },
-          //                         child: const Row(
-          //                           mainAxisAlignment: MainAxisAlignment.center,
-          //                           children: [
-          //                             Icon(Icons.shopping_cart_outlined),
-          //                             SizedBox(width: 10),
-          //                             Text("Add To Cart"),
-          //                           ],
-          //                         ),
-          //                       )
-          //                     : const Center(child: Text("Shop is closed")),
-          //                 const SizedBox(height: 6),
-          //               ],
-          //             ),
-          //           ),
-          //         ));
+              builder: (context) => ItemDetailsPage(
+                    item: MenuItem.fromJson(item),
+                    shopIsOpen: isShopOpen,
+                  )));
         },
         onLongPress: () {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -42,24 +42,7 @@ class _SplashPageState extends State<SplashPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'eat.',
-                    style: TextStyle(
-                      color: Colors.brown.shade600,
-                      fontSize: 24,
-                    ),
-                  ),
-                  Text('caias',
-                      style: TextStyle(
-                        color: Colors.amber.shade800,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                      )),
-                ],
-              ),
+              mainLogoMark(),
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text('Made by Hari Prasad'),

@@ -29,6 +29,11 @@ class _TicketListPageState extends State<TicketListPage> {
               .toList()
               .length;
         });
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(normalSnackBar("No tickets found!"));
+        }
       }
     } on PostgrestException catch (error) {
       if (mounted) {
@@ -133,15 +138,26 @@ class _TicketListPageState extends State<TicketListPage> {
             )),
       ),
       body: _allTickets != null
-          ? ListView.builder(
-              padding: const EdgeInsets.only(bottom: 60),
-              physics: const BouncingScrollPhysics(),
-              itemCount: _allTickets!.length,
-              itemBuilder: (context, index) {
-                var item = _allTickets![index];
-                return getTicketListTile(item);
-              },
-            )
+          ? _allTickets!.isEmpty
+              ? ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 60),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: _allTickets!.length,
+                  itemBuilder: (context, index) {
+                    var item = _allTickets![index];
+                    return getTicketListTile(item);
+                  },
+                )
+              : const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shopping_cart_outlined, size: 100),
+                      SizedBox(height: 10),
+                      Text("No pending orders"),
+                    ],
+                  ),
+                )
           : ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 5,
